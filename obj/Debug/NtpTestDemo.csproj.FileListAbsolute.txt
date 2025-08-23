@@ -1,0 +1,13 @@
+D:\zzctool\demo\wpftest\NtpTestDemo\bin\Debug\NtpTestDemo.exe
+D:\zzctool\demo\wpftest\NtpTestDemo\obj\Debug\NtpTestDemo.csproj.AssemblyReference.cache
+D:\zzctool\demo\wpftest\NtpTestDemo\obj\Debug\MainWindow.g.cs
+D:\zzctool\demo\wpftest\NtpTestDemo\obj\Debug\App.g.cs
+D:\zzctool\demo\wpftest\NtpTestDemo\obj\Debug\NtpTestDemo_MarkupCompile.cache
+D:\zzctool\demo\wpftest\NtpTestDemo\obj\Debug\NtpTestDemo_MarkupCompile.lref
+D:\zzctool\demo\wpftest\NtpTestDemo\obj\Debug\MainWindow.baml
+D:\zzctool\demo\wpftest\NtpTestDemo\obj\Debug\NtpTestDemo.g.resources
+D:\zzctool\demo\wpftest\NtpTestDemo\obj\Debug\NtpTestDemo.Properties.Resources.resources
+D:\zzctool\demo\wpftest\NtpTestDemo\obj\Debug\NtpTestDemo.csproj.GenerateResource.cache
+D:\zzctool\demo\wpftest\NtpTestDemo\obj\Debug\NtpTestDemo.csproj.CoreCompileInputs.cache
+D:\zzctool\demo\wpftest\NtpTestDemo\obj\Debug\NtpTestDemo.exe
+D:\zzctool\demo\wpftest\NtpTestDemo\obj\Debug\NtpTestDemo.csproj.Fody.CopyLocal.cache

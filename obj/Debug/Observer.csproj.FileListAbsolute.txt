@@ -1,0 +1,14 @@
+D:\work\demo\WPF\Observer\bin\Debug\Observer.exe
+D:\work\demo\WPF\Observer\obj\Debug\Observer.csproj.AssemblyReference.cache
+D:\work\demo\WPF\Observer\obj\Debug\MainWindow.g.cs
+D:\work\demo\WPF\Observer\obj\Debug\App.g.cs
+D:\work\demo\WPF\Observer\obj\Debug\Observer_MarkupCompile.cache
+D:\work\demo\WPF\Observer\obj\Debug\Observer_MarkupCompile.lref
+D:\work\demo\WPF\Observer\obj\Debug\MainWindow.baml
+D:\work\demo\WPF\Observer\obj\Debug\Observer.g.resources
+D:\work\demo\WPF\Observer\obj\Debug\Observer.Properties.Resources.resources
+D:\work\demo\WPF\Observer\obj\Debug\Observer.csproj.GenerateResource.cache
+D:\work\demo\WPF\Observer\obj\Debug\Observer.csproj.CoreCompileInputs.cache
+D:\work\demo\WPF\Observer\obj\Debug\Observer.csproj.Fody.CopyLocal.cache
+D:\work\demo\WPF\Observer\obj\Debug\Observer.exe
+D:\work\demo\WPF\Observer\obj\Debug\App.baml
