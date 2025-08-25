@@ -12,3 +12,5 @@ D:\work\demo\WPF\Observer\obj\Debug\Observer.csproj.CoreCompileInputs.cache
 D:\work\demo\WPF\Observer\obj\Debug\Observer.csproj.Fody.CopyLocal.cache
 D:\work\demo\WPF\Observer\obj\Debug\Observer.exe
 D:\work\demo\WPF\Observer\obj\Debug\App.baml
+D:\work\demo\WPF\Observer\bin\Debug\Accord.dll.config
+D:\work\demo\WPF\Observer\obj\Debug\Observer_Content.g.cs

@@ -20,6 +20,9 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
         </Grid.RowDefinitions>
 
         <TextBlock
@@ -39,5 +42,22 @@
             Style="{StaticResource TextBoxExtend}"
             Text="" />
 
+        <Button Grid.Row="2" Click="test">test</Button>
+        <Button Grid.Row="3" Click="test2">test2</Button>
+        <Label
+            x:Name="sm"
+            Grid.Row="4"
+            Width="27"
+            Height="27"
+            Margin="0,10,0,0"
+            hc:BorderElement.CornerRadius="50"
+            DockPanel.Dock="Right"
+            Foreground="Gray">
+            ?
+            <Label.ToolTip>
+                <ToolTip Content="{x:Static local:Common.ApiStatus}" />
+            </Label.ToolTip>
+
+        </Label>
     </Grid>
 </Window>

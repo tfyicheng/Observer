@@ -108,6 +108,19 @@ namespace Observer
             }
         }
 
+
+        public void StartNgrok()
+        {
+            // 从配置读取
+            string ngrokPath = @"D:\soft\devTools\Ngrok\ngrok.exe";
+            int localPort = 8086;
+
+            Common.ngrok = new NgrokHelper(ngrokPath);
+            string publicUrl = Common.ngrok.StartTunnel(localPort);
+
+            Console.WriteLine("公网地址: " + publicUrl);
+        }
+
         private void Window_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
@@ -116,6 +129,16 @@ namespace Observer
 
                 this.Close();
             }
+        }
+
+        private void test(object sender, RoutedEventArgs e)
+        {
+            StartNgrok();
+        }
+
+        private void test2(object sender, RoutedEventArgs e)
+        {
+            Common.ngrok.StopTunnel();
         }
     }
 }

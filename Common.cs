@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -10,6 +12,7 @@ namespace Observer
 {
     public static class Common
     {
+        public static NgrokHelper ngrok;
 
         public static myIcon ic = new myIcon();
 
@@ -24,6 +27,7 @@ namespace Observer
 
         [DllImport("user32.dll")]
         public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
         /// <summary>
         /// 设置窗体前置
         /// </summary>
@@ -75,6 +79,13 @@ namespace Observer
         }
 
 
+        public static string ApiStatus => getApi(); // 自动调用方法
+
+        //获取接口说明
+        public static string getApi()
+        {
+            return $"/all:全部信息\n/dl:电量\n/wz:位置\n/wl:网络\n/zt:服务状态/getcamera:拍取照片\n/getphotonow:拍取照片并返回结果\n/getlatestphoto:获取最后一次拍取的照片\n";
+        }
 
         //获取电量情况
         public static void PrintBatteryStatus()
@@ -122,7 +133,6 @@ namespace Observer
             return false;
         }
 
-
         [StructLayout(LayoutKind.Sequential)]
         struct LASTINPUTINFO
         {
@@ -149,6 +159,42 @@ namespace Observer
         {
             return GetIdleTime().TotalSeconds < seconds;
         }
+
+        //查询定位（api）
+        public class IpApiResponse
+        {
+            public string Country { get; set; }
+            public string RegionName { get; set; }
+            public string City { get; set; }
+            public float Lat { get; set; }
+            public float Lon { get; set; }
+            public string Query { get; set; }
+        }
+
+        public static IpApiResponse GetLocation()
+        {
+            using (var client = new HttpClient())
+            {
+                var json = client.GetStringAsync("http://ip-api.com/json/").Result;
+                return JsonConvert.DeserializeObject<IpApiResponse>(json);
+            }
+        }
+
+        public static string GetLocationStatus()
+        {
+            var loc = GetLocation();
+            return $"{loc.Country}/{loc.RegionName}/{loc.City}, 经纬度({loc.Lat},{loc.Lon}), 查询ip({loc.Query})";
+        }
+
+        //获取所有状态
+        public static string AllStatus()
+        {
+            var status = System.Windows.Forms.SystemInformation.PowerStatus;
+            string re = $"电量：{status.BatteryLifePercent * 100}\n充电状态：{(status.PowerLineStatus == System.Windows.Forms.PowerLineStatus.Online ? "充电中" : "放电中")}\n预计可用时间(min)：{(status.BatteryLifeRemaining > 0 ? status.BatteryLifeRemaining / 60 : -1)}\n网络状态：{(Common.IsInternetAvailable() ? "在线" : "离线")}\n键鼠状态：{(Common.HasUserActivityWithin(5) ? "触发" : "静置")}\n网络定位：{GetLocationStatus()}";
+            return re;
+        }
+
+
 
     }
 }
