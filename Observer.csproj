@@ -112,8 +112,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ConfigManager.cs" />
+    <Compile Include="MainModel.cs" />
     <Compile Include="NgrokHelper.cs" />
     <Compile Include="Server.cs" />
+    <Compile Include="ViewModelBase.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

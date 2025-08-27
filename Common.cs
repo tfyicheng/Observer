@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
@@ -12,6 +13,8 @@ namespace Observer
 {
     public static class Common
     {
+        public static DateTime? _startTime;
+
         public static NgrokHelper ngrok;
 
         public static myIcon ic = new myIcon();
@@ -84,8 +87,45 @@ namespace Observer
         //获取接口说明
         public static string getApi()
         {
-            return $"/all:全部信息\n/dl:电量\n/wz:位置\n/wl:网络\n/zt:服务状态/getcamera:拍取照片\n/getphotonow:拍取照片并返回结果\n/getlatestphoto:获取最后一次拍取的照片\n";
+            return $"/all: 全部信息\n/dl: 电量\n/wz: 位置\n/wl: 网络\n/zt: 服务状态\n/getcamera: 拍照\n/getphotonow: 拍照并返回结果\n/getphoto: 获取拍照结果(?file=文件名)\n/getlatestphoto: 获取最后一次拍照结果\n";
         }
+
+        //获取接口说明（html）
+        public static string getApiHtml(HttpListenerRequest request)
+        {
+            string host = request.Url.Host;
+            int port = request.Url.Port;
+
+            return $@"
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>API 帮助</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; padding: 20px; }}
+        h2 {{ color: #333; }}
+        ul {{ line-height: 1.8; }}
+        a {{ text-decoration: none; color: #0078d7; }}
+        a:hover {{ text-decoration: underline; }}
+    </style>
+</head>
+<body>
+    <h2>API 接口说明</h2>
+    <ul>
+        <li><a href='http://{host}/all'>/all</a> : 全部信息</li>
+        <li><a href='http://{host}/dl'>/dl</a> : 电量</li>
+        <li><a href='http://{host}/wz'>/wz</a> : 位置</li>
+        <li><a href='http://{host}/wl'>/wl</a> : 网络</li>
+        <li><a href='http://{host}/zt'>/zt</a> : 服务状态</li>
+        <li><a href='http://{host}/getcamera'>/getcamera</a> : 拍照</li>
+        <li><a href='http://{host}/getphotonow'>/getphotonow</a> : 拍照并返回结果</li>
+        <li>/getphoto?file=文件名 : 获取拍照结果</li>
+        <li><a href='http://{host}/getlatestphoto'>/getlatestphoto</a> : 获取最后一次拍照结果</li>
+    </ul>
+</body>
+</html>";
+        }
+
 
         //获取电量情况
         public static void PrintBatteryStatus()
@@ -186,11 +226,19 @@ namespace Observer
             return $"{loc.Country}/{loc.RegionName}/{loc.City}, 经纬度({loc.Lat},{loc.Lon}), 查询ip({loc.Query})";
         }
 
+        //获取运行时间
+        public static string GetRunTime()
+        {
+            var uptime = DateTime.Now - (_startTime ?? DateTime.Now);
+            return string.Format("{0:D2}:{1:D2}:{2:D2}",
+            (int)uptime.TotalHours, uptime.Minutes, uptime.Seconds);
+        }
+
         //获取所有状态
         public static string AllStatus()
         {
             var status = System.Windows.Forms.SystemInformation.PowerStatus;
-            string re = $"电量：{status.BatteryLifePercent * 100}\n充电状态：{(status.PowerLineStatus == System.Windows.Forms.PowerLineStatus.Online ? "充电中" : "放电中")}\n预计可用时间(min)：{(status.BatteryLifeRemaining > 0 ? status.BatteryLifeRemaining / 60 : -1)}\n网络状态：{(Common.IsInternetAvailable() ? "在线" : "离线")}\n键鼠状态：{(Common.HasUserActivityWithin(5) ? "触发" : "静置")}\n网络定位：{GetLocationStatus()}";
+            string re = $"运行时间：{GetRunTime()}\n电量：{status.BatteryLifePercent * 100}\n充电状态：{(status.PowerLineStatus == System.Windows.Forms.PowerLineStatus.Online ? "充电中" : "放电中")}\n预计可用时间(min)：{(status.BatteryLifeRemaining > 0 ? status.BatteryLifeRemaining / 60 : -1)}\n网络状态：{(Common.IsInternetAvailable() ? "在线" : "离线")}\n键鼠状态：{(Common.HasUserActivityWithin(5) ? "触发" : "静置")}\n网络定位：{GetLocationStatus()}";
             return re;
         }
 

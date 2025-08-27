@@ -72,7 +72,7 @@ namespace Observer
         //退出菜单项对应的处理方式
         public void CloseWindow(object sender, EventArgs e)
         {
-            Common.ngrok.StopTunnel();
+            Common.ngrok?.StopTunnel();
             //Dispose()函数能够解决程序退出后图标还在，要鼠标划一下才消失的问题
             this.notifyIcon.Dispose();
             //关闭整个程序

@@ -14,14 +14,17 @@ namespace Observer
     /// </summary>
     public partial class MainWindow : Window
     {
-
+        private MainModel model;
         private static Timer timer;
         private static float lastBatteryPercent = -1;
         public MainWindow()
         {
             InitializeComponent();
-
+            model = ConfigManager.Load();
+            this.DataContext = model;
             Common.ic.Icon();
+            //订阅属性变化，触发保存
+            model.PropertyChanged += (s, e) => ConfigManager.Save(model);
         }
 
         private void Main_Loaded(object sender, RoutedEventArgs e)
@@ -33,10 +36,10 @@ namespace Observer
 
         private void startObserver()
         {
-            timer = new Timer(5000); // 5 秒检查一次
-            timer.Elapsed += CheckStatus;
-            timer.AutoReset = true;
-            timer.Start();
+            //timer = new Timer(5000); // 5 秒检查一次
+            //timer.Elapsed += CheckStatus;
+            //timer.AutoReset = true;
+            //timer.Start();
             Observer.Server.Start(8086);  // 启动
         }
 

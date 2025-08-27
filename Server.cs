@@ -51,7 +51,8 @@ namespace Observer
             return new
             {
                 Running = _server.IsRunning,
-                Port = _server.Port
+                Port = _server.Port,
+                Runtime = Common.GetRunTime()
             };
         }
     }
@@ -106,6 +107,13 @@ namespace Observer
 
                 switch (path)
                 {
+                    case "":
+                    case "/":
+                        // 默认跳转到 help
+                        context.Response.Redirect("/help");
+                        break;
+
+
                     case "all":
                         responseText = Common.AllStatus();
                         break;
@@ -194,7 +202,7 @@ namespace Observer
                         return;
 
                     case "help":
-                        responseText = Common.getApi();
+                        responseText = Common.getApiHtml(context.Request);
                         break;
 
                     default:
@@ -203,7 +211,7 @@ namespace Observer
                 }
 
                 byte[] buffer = Encoding.UTF8.GetBytes(responseText);
-                context.Response.ContentType = "application/json";
+                context.Response.ContentType = path == "help" ? "text/html; charset=utf-8" : "application/json";
                 context.Response.ContentEncoding = Encoding.UTF8;
                 context.Response.ContentLength64 = buffer.Length;
                 context.Response.OutputStream.Write(buffer, 0, buffer.Length);
