@@ -1,18 +1,21 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Threading;
 
 namespace Observer
 {
     public static class ConfigManager
     {
-        private static readonly string ConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
+        private static readonly string ConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "observercfg.json");
+        private static Timer _saveTimer;
+        private static MainModel _pendingConfig;
+        private static readonly object _lock = new object();
+
 
         private static MainModel defModel = new MainModel()
         {
-            Enable1 = false,
-            RequestApi0 = "ceshi",
-            RequestType0 = "Post"
+            Port = "8086"
         };
 
 
@@ -36,6 +39,32 @@ namespace Observer
                 var defaultConfig = defModel;
                 Save(defaultConfig);
                 return defaultConfig;
+            }
+        }
+
+
+        // 节流保存：延迟 1 秒写入
+        public static void SaveThrottled(MainModel config)
+        {
+            lock (_lock)
+            {
+                _pendingConfig = config;
+
+                // 如果已有定时器，重置
+                _saveTimer?.Dispose();
+
+                // 延迟 1 秒再执行保存
+                _saveTimer = new Timer(_ =>
+                {
+                    lock (_lock)
+                    {
+                        if (_pendingConfig != null)
+                        {
+                            Save(_pendingConfig);
+                            _pendingConfig = null;
+                        }
+                    }
+                }, null, 1000, Timeout.Infinite);
             }
         }
 

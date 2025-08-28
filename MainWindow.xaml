@@ -164,6 +164,8 @@
         </Style>
 
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <local:IntCompareToVisibilityConverter x:Key="IntToVis" />
     </Window.Resources>
 
     <Grid>
@@ -208,6 +210,7 @@
                                             Margin="5"
                                             Background="#4CAEE1"
                                             BorderBrush="#4CAEE1"
+                                            Command="{Binding SendRequestCommand}"
                                             Content="测试"
                                             Cursor="Hand"
                                             DockPanel.Dock="Right"
@@ -223,7 +226,7 @@
                                             Foreground="Gray">
                                             ?
                                             <Label.ToolTip>
-                                                <ToolTip xml:space="preserve">1. esc热键关闭窗口  &#x0A;2. 鼠标悬停设置选项以查看说明  &#x0A;3. 移动程序主体时注意连带同目录下的config.json文件</ToolTip>
+                                                <ToolTip xml:space="preserve">请求中使用{{xxx}}自动替换对应信息 &#x0A;{{触发条件}} &#x0A;{{触发结果}} &#x0A;{{运行时间}} &#x0A;{{电量}} &#x0A;{{充电状态}} &#x0A;{{可用时间}} &#x0A;{{网络状态}} &#x0A;{{键鼠状态}} &#x0A;{{网络定位}} &#x0A;{{服务状态}} &#x0A;{{公网链接}}</ToolTip>
                                             </Label.ToolTip>
                                         </Label>
                                     </DockPanel>
@@ -240,7 +243,7 @@
                                             Margin="0,10,10,0"
                                             hc:InfoElement.Placeholder="请求类型"
                                             ItemContainerStyle="{StaticResource MyComboBoxItemStyle}"
-                                            ItemsSource="{Binding requestType}"
+                                            ItemsSource="{Binding requestTypes}"
                                             SelectedIndex="0"
                                             SelectedItem="{Binding RequestType0}" />
 
@@ -260,13 +263,11 @@
                                         hc:InfoElement.Placeholder="请求体"
                                         hc:InfoElement.ShowClearButton="True"
                                         AcceptsReturn="True"
+                                        Text="{Binding RequestBody0}"
                                         TextWrapping="Wrap"
                                         VerticalScrollBarVisibility="Visible" />
                                 </Grid>
-
                             </Border>
-
-
 
                             <Border Grid.Row="1" Style="{StaticResource CardStyle}">
                                 <Grid>
@@ -288,7 +289,8 @@
                                         <hc:NumericUpDown
                                             Width="70"
                                             Maximum="100"
-                                            Minimum="0" />
+                                            Minimum="0"
+                                            Value="{Binding Limite1}" />
 
                                         <ToggleButton
                                             x:Name="Enable1"
@@ -313,10 +315,11 @@
                                             |
                                         </TextBlock>
                                         <ToggleButton
+                                            x:Name="Enable11"
                                             Margin="5"
                                             hc:VisualElement.HighlightBrush="#4CAEE1"
                                             DockPanel.Dock="Right"
-                                            IsChecked="True"
+                                            IsChecked="{Binding Enable11}"
                                             Style="{StaticResource ToggleButtonSwitch.Small}" />
                                         <TextBlock
                                             Margin="0"
@@ -328,7 +331,7 @@
                                         </TextBlock>
                                     </DockPanel>
 
-                                    <Grid Grid.Row="1" Visibility="{Binding Enable1, ElementName=Enable1, Converter={StaticResource BoolToVis}}">
+                                    <Grid Grid.Row="1" Visibility="{Binding IsChecked, ElementName=Enable11, Converter={StaticResource BoolToVis}}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
@@ -339,15 +342,17 @@
                                             Width="100"
                                             Margin="0,10,10,0"
                                             hc:InfoElement.Placeholder="请求类型"
-                                            ItemsSource="{Binding DataList}"
-                                            SelectedIndex="0" />
+                                            ItemsSource="{Binding requestTypes}"
+                                            SelectedIndex="0"
+                                            SelectedItem="{Binding RequestType1}" />
 
 
                                         <hc:TextBox
                                             Grid.Column="1"
                                             Margin="0,10,0,0"
                                             hc:InfoElement.Placeholder="请求接口"
-                                            hc:InfoElement.ShowClearButton="True" />
+                                            hc:InfoElement.ShowClearButton="True"
+                                            Text="{Binding RequestApi1}" />
                                     </Grid>
 
                                     <hc:TextBox
@@ -357,9 +362,10 @@
                                         hc:InfoElement.Placeholder="请求体"
                                         hc:InfoElement.ShowClearButton="True"
                                         AcceptsReturn="True"
+                                        Text="{Binding RequestBody1}"
                                         TextWrapping="Wrap"
                                         VerticalScrollBarVisibility="Visible"
-                                        Visibility="Collapsed" />
+                                        Visibility="{Binding IsChecked, ElementName=Enable11, Converter={StaticResource BoolToVis}}" />
                                 </Grid>
 
                             </Border>
@@ -379,15 +385,16 @@
                                             VerticalAlignment="Center"
                                             DockPanel.Dock="Left"
                                             FontSize="13">
-                                            网络变化
+                                            充电状态
                                         </TextBlock>
 
 
                                         <ToggleButton
+                                            x:Name="Enable2"
                                             Margin="5"
                                             hc:VisualElement.HighlightBrush="#4CAEE1"
                                             DockPanel.Dock="Right"
-                                            IsChecked="True"
+                                            IsChecked="{Binding Enable2}"
                                             Style="{StaticResource ToggleButtonSwitch.Small}" />
                                         <TextBlock
                                             Margin="5,0,0,0"
@@ -405,10 +412,11 @@
                                             |
                                         </TextBlock>
                                         <ToggleButton
+                                            x:Name="Enable22"
                                             Margin="5"
                                             hc:VisualElement.HighlightBrush="#4CAEE1"
                                             DockPanel.Dock="Right"
-                                            IsChecked="True"
+                                            IsChecked="{Binding Enable22}"
                                             Style="{StaticResource ToggleButtonSwitch.Small}" />
                                         <TextBlock
                                             Margin="0"
@@ -420,7 +428,7 @@
                                         </TextBlock>
                                     </DockPanel>
 
-                                    <Grid Grid.Row="1" Visibility="Collapsed">
+                                    <Grid Grid.Row="1" Visibility="{Binding IsChecked, ElementName=Enable22, Converter={StaticResource BoolToVis}}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
@@ -431,15 +439,17 @@
                                             Width="100"
                                             Margin="0,10,10,0"
                                             hc:InfoElement.Placeholder="请求类型"
-                                            ItemsSource="{Binding DataList}"
-                                            SelectedIndex="0" />
+                                            ItemsSource="{Binding requestTypes}"
+                                            SelectedIndex="0"
+                                            SelectedItem="{Binding RequestType2}" />
 
 
                                         <hc:TextBox
                                             Grid.Column="1"
                                             Margin="0,10,0,0"
                                             hc:InfoElement.Placeholder="请求接口"
-                                            hc:InfoElement.ShowClearButton="True" />
+                                            hc:InfoElement.ShowClearButton="True"
+                                            Text="{Binding RequestApi2}" />
                                     </Grid>
 
                                     <hc:TextBox
@@ -449,9 +459,10 @@
                                         hc:InfoElement.Placeholder="请求体"
                                         hc:InfoElement.ShowClearButton="True"
                                         AcceptsReturn="True"
+                                        Text="{Binding RequestBody2}"
                                         TextWrapping="Wrap"
                                         VerticalScrollBarVisibility="Visible"
-                                        Visibility="Collapsed" />
+                                        Visibility="{Binding IsChecked, ElementName=Enable22, Converter={StaticResource BoolToVis}}" />
                                 </Grid>
                             </Border>
 
@@ -470,15 +481,16 @@
                                             VerticalAlignment="Center"
                                             DockPanel.Dock="Left"
                                             FontSize="13">
-                                            键鼠触发
+                                            键鼠触发(锁屏状态)
                                         </TextBlock>
 
 
                                         <ToggleButton
+                                            x:Name="Enable3"
                                             Margin="5"
                                             hc:VisualElement.HighlightBrush="#4CAEE1"
                                             DockPanel.Dock="Right"
-                                            IsChecked="True"
+                                            IsChecked="{Binding Enable3}"
                                             Style="{StaticResource ToggleButtonSwitch.Small}" />
                                         <TextBlock
                                             Margin="5,0,0,0"
@@ -496,10 +508,11 @@
                                             |
                                         </TextBlock>
                                         <ToggleButton
+                                            x:Name="Enable33"
                                             Margin="5"
                                             hc:VisualElement.HighlightBrush="#4CAEE1"
                                             DockPanel.Dock="Right"
-                                            IsChecked="True"
+                                            IsChecked="{Binding Enable33}"
                                             Style="{StaticResource ToggleButtonSwitch.Small}" />
                                         <TextBlock
                                             Margin="0"
@@ -511,7 +524,7 @@
                                         </TextBlock>
                                     </DockPanel>
 
-                                    <Grid Grid.Row="1" Visibility="Collapsed">
+                                    <Grid Grid.Row="1" Visibility="{Binding IsChecked, ElementName=Enable33, Converter={StaticResource BoolToVis}}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
@@ -522,15 +535,17 @@
                                             Width="100"
                                             Margin="0,10,10,0"
                                             hc:InfoElement.Placeholder="请求类型"
-                                            ItemsSource="{Binding DataList}"
-                                            SelectedIndex="0" />
+                                            ItemsSource="{Binding requestTypes}"
+                                            SelectedIndex="0"
+                                            SelectedItem="{Binding RequestType3}" />
 
 
                                         <hc:TextBox
                                             Grid.Column="1"
                                             Margin="0,10,0,0"
                                             hc:InfoElement.Placeholder="请求接口"
-                                            hc:InfoElement.ShowClearButton="True" />
+                                            hc:InfoElement.ShowClearButton="True"
+                                            Text="{Binding RequestApi3}" />
                                     </Grid>
 
                                     <hc:TextBox
@@ -540,9 +555,10 @@
                                         hc:InfoElement.Placeholder="请求体"
                                         hc:InfoElement.ShowClearButton="True"
                                         AcceptsReturn="True"
+                                        Text="{Binding RequestBody3}"
                                         TextWrapping="Wrap"
                                         VerticalScrollBarVisibility="Visible"
-                                        Visibility="Collapsed" />
+                                        Visibility="{Binding IsChecked, ElementName=Enable33, Converter={StaticResource BoolToVis}}" />
                                 </Grid>
                             </Border>
 
@@ -567,14 +583,16 @@
                                             Width="auto"
                                             Margin="0,0,5,0"
                                             Maximum="999999"
-                                            Minimum="1" />
+                                            Minimum="1"
+                                            Value="{Binding Limite4}" />
                                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">min</TextBlock>
 
                                         <ToggleButton
+                                            x:Name="Enable4"
                                             Margin="5"
                                             hc:VisualElement.HighlightBrush="#4CAEE1"
                                             DockPanel.Dock="Right"
-                                            IsChecked="True"
+                                            IsChecked="{Binding Enable4}"
                                             Style="{StaticResource ToggleButtonSwitch.Small}" />
                                         <TextBlock
                                             Margin="5,0,0,0"
@@ -592,10 +610,11 @@
                                             |
                                         </TextBlock>
                                         <ToggleButton
+                                            x:Name="Enable44"
                                             Margin="5"
                                             hc:VisualElement.HighlightBrush="#4CAEE1"
                                             DockPanel.Dock="Right"
-                                            IsChecked="True"
+                                            IsChecked="{Binding Enable44}"
                                             Style="{StaticResource ToggleButtonSwitch.Small}" />
                                         <TextBlock
                                             Margin="0"
@@ -607,7 +626,7 @@
                                         </TextBlock>
                                     </DockPanel>
 
-                                    <Grid Grid.Row="1" Visibility="Collapsed">
+                                    <Grid Grid.Row="1" Visibility="{Binding IsChecked, ElementName=Enable44, Converter={StaticResource BoolToVis}}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
@@ -618,15 +637,17 @@
                                             Width="100"
                                             Margin="0,10,10,0"
                                             hc:InfoElement.Placeholder="请求类型"
-                                            ItemsSource="{Binding DataList}"
-                                            SelectedIndex="0" />
+                                            ItemsSource="{Binding requestTypes}"
+                                            SelectedIndex="0"
+                                            SelectedItem="{Binding RequestType4}" />
 
 
                                         <hc:TextBox
                                             Grid.Column="1"
                                             Margin="0,10,0,0"
                                             hc:InfoElement.Placeholder="请求接口"
-                                            hc:InfoElement.ShowClearButton="True" />
+                                            hc:InfoElement.ShowClearButton="True"
+                                            Text="{Binding RequestApi4}" />
                                     </Grid>
 
                                     <hc:TextBox
@@ -636,9 +657,10 @@
                                         hc:InfoElement.Placeholder="请求体"
                                         hc:InfoElement.ShowClearButton="True"
                                         AcceptsReturn="True"
+                                        Text="{Binding RequestBody4}"
                                         TextWrapping="Wrap"
                                         VerticalScrollBarVisibility="Visible"
-                                        Visibility="Collapsed" />
+                                        Visibility="{Binding IsChecked, ElementName=Enable44, Converter={StaticResource BoolToVis}}" />
                                 </Grid>
                             </Border>
 
@@ -685,22 +707,25 @@
                                     <StackPanel
                                         Grid.Row="0"
                                         FlowDirection="RightToLeft"
-                                        Orientation="Horizontal">
+                                        Orientation="Horizontal"
+                                        Visibility="{Binding RunStatus, Converter={StaticResource IntToVis}, ConverterParameter=0|2}">
 
                                         <Button
                                             Margin="0,0,10,0"
                                             hc:BorderElement.CornerRadius="8"
-                                            Click="test2"
+                                            Command="{Binding StopServerCommand}"
                                             Cursor="Hand"
-                                            Style="{StaticResource ButtonDanger}">
+                                            Style="{StaticResource ButtonDanger}"
+                                            Visibility="{Binding RunStatus, Converter={StaticResource IntToVis}, ConverterParameter=2-Collapsed}">
                                             停止服务
                                         </Button>
                                         <Button
                                             Margin="0,0,10,0"
                                             hc:BorderElement.CornerRadius="8"
-                                            Click="test"
+                                            Command="{Binding StartServerCommand}"
                                             Cursor="Hand"
-                                            Style="{StaticResource ButtonSuccess}">
+                                            Style="{StaticResource ButtonSuccess}"
+                                            Visibility="{Binding RunStatus, Converter={StaticResource IntToVis}, ConverterParameter=0-Collapsed}">
                                             启动服务
                                         </Button>
                                         <Label
@@ -721,6 +746,11 @@
                                         </Label>
                                     </StackPanel>
 
+                                    <hc:LoadingLine
+                                        Margin="0"
+                                        Foreground="#4CAEE1"
+                                        Visibility="{Binding RunStatus, Converter={StaticResource IntToVis}, ConverterParameter=1}" />
+
                                     <DockPanel
                                         Grid.Row="1"
                                         Margin="0,0,0,15"
@@ -733,7 +763,8 @@
                                         <hc:TextBox
                                             Margin="0,0,0,0"
                                             hc:InfoElement.Placeholder="端口号"
-                                            hc:InfoElement.ShowClearButton="True" />
+                                            hc:InfoElement.ShowClearButton="True"
+                                            Text="{Binding Port}" />
                                     </DockPanel>
 
 
@@ -746,6 +777,7 @@
                                             Margin="0,0,10,0"
                                             Background="#4CAEE1"
                                             BorderBrush="#4CAEE1"
+                                            Command="{Binding GetPathCommand}"
                                             Cursor="Hand"
                                             Style="{StaticResource ButtonSuccess}">
                                             浏览路径
@@ -753,7 +785,8 @@
                                         <hc:TextBox
                                             Margin="0,0,0,0"
                                             hc:InfoElement.Placeholder="本地Ngrok的程序路径"
-                                            hc:InfoElement.ShowClearButton="True" />
+                                            hc:InfoElement.ShowClearButton="True"
+                                            Text="{Binding Path}" />
                                     </DockPanel>
 
                                     <DockPanel
@@ -765,6 +798,7 @@
                                             Margin="0,0,10,0"
                                             Background="#4CAEE1"
                                             BorderBrush="#4CAEE1"
+                                            Command="{Binding CopyLinkCommand}"
                                             Cursor="Hand"
                                             Style="{StaticResource ButtonSuccess}">
                                             复制链接
@@ -772,7 +806,8 @@
                                         <hc:TextBox
                                             Margin="0,0,0,0"
                                             hc:InfoElement.Placeholder="启动Ngrok服务后获取的访问链接"
-                                            hc:InfoElement.ShowClearButton="True" />
+                                            hc:InfoElement.ShowClearButton="True"
+                                            Text="{Binding Link}" />
                                     </DockPanel>
 
                                 </Grid>
@@ -802,7 +837,7 @@
                                         <ToggleButton
                                             Margin="5"
                                             hc:VisualElement.HighlightBrush="#4CAEE1"
-                                            IsChecked="True"
+                                            IsChecked="{Binding Run0}"
                                             Style="{StaticResource ToggleButtonSwitch.Small}" />
                                         <TextBlock
                                             VerticalAlignment="Center"
@@ -820,14 +855,12 @@
                                         <ToggleButton
                                             Margin="5"
                                             hc:VisualElement.HighlightBrush="#4CAEE1"
-                                            IsChecked="True"
+                                            IsChecked="{Binding Run1}"
                                             Style="{StaticResource ToggleButtonSwitch.Small}" />
                                         <TextBlock
                                             VerticalAlignment="Center"
                                             FontSize="12"
                                             Text="Ngrok服务跟随启动" />
-
-
                                     </StackPanel>
                                 </WrapPanel>
                             </Border>

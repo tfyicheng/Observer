@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Win32;
+using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -13,6 +14,8 @@ namespace Observer
 {
     public static class Common
     {
+        public static MainModel model;
+
         public static DateTime? _startTime;
 
         public static NgrokHelper ngrok;
@@ -87,7 +90,7 @@ namespace Observer
         //获取接口说明
         public static string getApi()
         {
-            return $"/all: 全部信息\n/dl: 电量\n/wz: 位置\n/wl: 网络\n/zt: 服务状态\n/getcamera: 拍照\n/getphotonow: 拍照并返回结果\n/getphoto: 获取拍照结果(?file=文件名)\n/getlatestphoto: 获取最后一次拍照结果\n";
+            return $"/help: 帮助\n/all: 全部信息\n/dl: 电量\n/wz: 位置\n/wl: 网络\n/zt: 服务状态\n/getcamera: 拍照\n/getphotonow: 拍照并返回结果\n/getphoto: 获取拍照结果(?file=文件名)\n/getlatestphoto: 获取最后一次拍照结果\n";
         }
 
         //获取接口说明（html）
@@ -128,7 +131,7 @@ namespace Observer
 
 
         //获取电量情况
-        public static void PrintBatteryStatus()
+        public static string PrintBatteryStatus(String tl = "")
         {
             PowerStatus status = SystemInformation.PowerStatus;
 
@@ -144,6 +147,19 @@ namespace Observer
             Console.WriteLine($"电量: {batteryLifePercent}%");
             Console.WriteLine($"剩余使用时间: {(batteryLifeRemaining > 0 ? batteryLifeRemaining / 60 + "分钟" : "未知")}");
             Console.WriteLine($"电源状态: {lineStatus}");
+
+            switch (tl)
+            {
+                case "电量":
+                    return $"{batteryLifePercent}";
+                case "剩余使用时间":
+                    return (batteryLifeRemaining > 0 ? batteryLifeRemaining / 60 + "分钟" : "未知");
+                case "电源状态":
+                    return lineStatus == System.Windows.Forms.PowerLineStatus.Online ? "充电中" : "放电中";
+                default:
+                    return "";
+            }
+
         }
 
         //查询网络状态
@@ -197,7 +213,15 @@ namespace Observer
 
         public static bool HasUserActivityWithin(int seconds)
         {
-            return GetIdleTime().TotalSeconds < seconds;
+            if (LockScreenHelper.HasLockedInputWithin(seconds))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            //return GetIdleTime().TotalSeconds < seconds;
         }
 
         //查询定位（api）
@@ -242,6 +266,118 @@ namespace Observer
             return re;
         }
 
+        public static bool IsValidPort(string portStr, out int port)
+        {
+            // 先尝试解析为整数
+            if (int.TryParse(portStr, out port))
+            {
+                // 检查范围：1 ~ 65535
+                return port >= 1 && port <= 65535;
+            }
+            return false;
+        }
+
+        private const string RunKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
+        private const string AppName = "Observer";
+
+        /// <summary>
+        /// 设置开机启动
+        /// </summary>
+        public static void EnableStartup()
+        {
+            try
+            {
+                string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(RunKey, true))
+                {
+                    if (key != null)
+                    {
+                        key.SetValue(AppName, exePath);
+                        HandyControl.Controls.Growl.Info("设置成功");
+                    }
+                }
+            }
+            catch (Exception ee)
+            {
+                HandyControl.Controls.Growl.Warning("设置失败:" + ee.Message);
+            }
+
+        }
+
+        /// <summary>
+        /// 取消开机启动
+        /// </summary>
+        public static void DisableStartup()
+        {
+            try
+            {
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(RunKey, true))
+                {
+                    if (key != null)
+                    {
+                        key.DeleteValue(AppName, false);
+                        HandyControl.Controls.Growl.Info("设置成功");
+                    }
+                }
+            }
+            catch (Exception ee)
+            {
+                HandyControl.Controls.Growl.Warning("设置失败:" + ee.Message);
+            }
+
+        }
+
+        /// <summary>
+        /// 判断是否已设置开机启动
+        /// </summary>
+        public static bool IsStartupEnabled()
+        {
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(RunKey, false))
+            {
+
+                if (key != null)
+                {
+                    var value = key.GetValue(AppName);
+                    return value != null && value.ToString() == System.Reflection.Assembly.GetExecutingAssembly().Location;
+                }
+                return false;
+            }
+        }
+
+        public static string trigger;
+
+        public static string result;
+
+        public static string GetValue(string key)
+        {
+            switch (key)
+            {
+                case "触发条件":
+                    return trigger;
+                case "触发结果":
+                    return result;
+                case "运行时间":
+                    return GetRunTime();
+                case "电量":
+                    return PrintBatteryStatus("电量");
+                case "充电状态":
+                    return PrintBatteryStatus("电源状态");
+                case "可用时间":
+                    return PrintBatteryStatus("剩余使用时间");
+                case "网络状态":
+                    return Common.IsInternetAvailable() ? "在线" : "离线";
+                case "键鼠状态":
+                    return Common.HasUserActivityWithin(5) ? "触发" : "静置";
+                case "网络定位":
+                    return GetLocationStatus();
+                case "服务状态":
+                    return model.RunStatus == 2 ? "运行中" : "未启动";
+                case "公网链接":
+                    return model.Link;
+                default:
+                    return $"[{key}?]";
+            }
+        }
 
 
     }

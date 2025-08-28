@@ -3,36 +3,36 @@
   "WorkspaceRootPath": "D:\\work\\demo\\WPF\\Observer\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|D:\\work\\demo\\WPF\\Observer\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "AbsoluteMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|d:\\work\\demo\\wpf\\observer\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|solutionrelative:mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|D:\\work\\demo\\WPF\\Observer\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|d:\\work\\demo\\wpf\\observer\\configmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|solutionrelative:configmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|d:\\work\\demo\\wpf\\observer\\mainmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|solutionrelative:mainmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|d:\\work\\demo\\wpf\\observer\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|solutionrelative:server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|D:\\work\\demo\\WPF\\Observer\\common.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|solutionrelative:common.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|D:\\work\\demo\\WPF\\Observer\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|solutionrelative:app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|D:\\work\\demo\\WPF\\Observer\\configmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|solutionrelative:configmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|d:\\work\\demo\\wpf\\observer\\ngrokhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|D:\\work\\demo\\WPF\\Observer\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|solutionrelative:server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|D:\\work\\demo\\WPF\\Observer\\mainmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|solutionrelative:mainmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|D:\\work\\demo\\WPF\\Observer\\ngrokhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|solutionrelative:ngrokhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|D:\\work\\demo\\WPF\\Observer\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|D:\\work\\demo\\WPF\\Observer\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|solutionrelative:app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{753D71DB-A13A-42FA-95B1-A8B719A38D62}|Observer.csproj|D:\\work\\demo\\WPF\\Observer\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
@@ -46,7 +46,7 @@
       "DocumentGroups": [
         {
           "DockedHeight": 432,
-          "SelectedChildIndex": 12,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -66,85 +66,97 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "D:\\work\\demo\\WPF\\Observer\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "MainWindow.xaml",
+              "ToolTip": "D:\\work\\demo\\WPF\\Observer\\MainWindow.xaml",
+              "RelativeToolTip": "MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-08-23T06:15:59.141Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 2,
               "Title": "ConfigManager.cs",
               "DocumentMoniker": "D:\\work\\demo\\WPF\\Observer\\ConfigManager.cs",
               "RelativeDocumentMoniker": "ConfigManager.cs",
               "ToolTip": "D:\\work\\demo\\WPF\\Observer\\ConfigManager.cs",
               "RelativeToolTip": "ConfigManager.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAiAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAB0AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-27T09:22:46.951Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "MainModel.cs",
               "DocumentMoniker": "D:\\work\\demo\\WPF\\Observer\\MainModel.cs",
               "RelativeDocumentMoniker": "MainModel.cs",
               "ToolTip": "D:\\work\\demo\\WPF\\Observer\\MainModel.cs",
               "RelativeToolTip": "MainModel.cs",
-              "ViewState": "AgIAACAAAAAAAAAAAAAmwDoAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAEkAAAAAAAAAAAAgwFEAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-27T08:45:31.669Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "Server.cs",
               "DocumentMoniker": "D:\\work\\demo\\WPF\\Observer\\Server.cs",
               "RelativeDocumentMoniker": "Server.cs",
               "ToolTip": "D:\\work\\demo\\WPF\\Observer\\Server.cs",
               "RelativeToolTip": "Server.cs",
-              "ViewState": "AgIAAEQAAAAAAAAAAAAcwFAAAAAbAAAAAAAAAA==",
+              "ViewState": "AgIAACAAAAAAAAAAAAAYwAwAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-26T01:26:14.546Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 5,
               "Title": "NgrokHelper.cs",
               "DocumentMoniker": "D:\\work\\demo\\WPF\\Observer\\NgrokHelper.cs",
               "RelativeDocumentMoniker": "NgrokHelper.cs",
               "ToolTip": "D:\\work\\demo\\WPF\\Observer\\NgrokHelper.cs",
               "RelativeToolTip": "NgrokHelper.cs",
-              "ViewState": "AgIAAEAAAAAAAAAAAAAqwE4AAAAUAAAAAAAAAA==",
+              "ViewState": "AgIAACIAAAAAAAAAAAAqwEwAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-25T06:10:06.006Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 1,
               "Title": "Common.cs",
               "DocumentMoniker": "D:\\work\\demo\\WPF\\Observer\\Common.cs",
               "RelativeDocumentMoniker": "Common.cs",
               "ToolTip": "D:\\work\\demo\\WPF\\Observer\\Common.cs",
               "RelativeToolTip": "Common.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAlAAAAAAAAAA==",
+              "ViewState": "AgIAAMkAAAAAAAAAAAA3wN0AAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-23T07:28:03.422Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 6,
               "Title": "MainWindow.xaml.cs",
               "DocumentMoniker": "D:\\work\\demo\\WPF\\Observer\\MainWindow.xaml.cs",
               "RelativeDocumentMoniker": "MainWindow.xaml.cs",
               "ToolTip": "D:\\work\\demo\\WPF\\Observer\\MainWindow.xaml.cs",
               "RelativeToolTip": "MainWindow.xaml.cs",
-              "ViewState": "AgIAABEAAAAAAAAAAAAvwCAAAAASAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-23T07:32:38.255Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "App.xaml.cs",
               "DocumentMoniker": "D:\\work\\demo\\WPF\\Observer\\App.xaml.cs",
               "RelativeDocumentMoniker": "App.xaml.cs",
@@ -165,18 +177,6 @@
               "RelativeToolTip": "App.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2025-08-23T06:15:42.491Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MainWindow.xaml",
-              "DocumentMoniker": "D:\\work\\demo\\WPF\\Observer\\MainWindow.xaml",
-              "RelativeDocumentMoniker": "MainWindow.xaml",
-              "ToolTip": "D:\\work\\demo\\WPF\\Observer\\MainWindow.xaml",
-              "RelativeToolTip": "MainWindow.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-08-23T06:15:59.141Z",
               "EditorCaption": ""
             }
           ]

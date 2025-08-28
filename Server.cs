@@ -3,8 +3,11 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Observer
 {
@@ -12,6 +15,7 @@ namespace Observer
     {
         private static SimpleServer _server;
 
+        private static readonly HttpClient _client = new HttpClient();
         /// <summary>
         /// 启动内置 HTTP 服务
         /// </summary>
@@ -54,6 +58,68 @@ namespace Observer
                 Port = _server.Port,
                 Runtime = Common.GetRunTime()
             };
+        }
+
+
+
+        /// <summary>
+        /// 发送 HTTP 请求
+        /// </summary>
+        /// <param name="method">请求方法 GET/POST</param>
+        /// <param name="url">请求地址</param>
+        /// <param name="body">请求体（POST 时有效</param>
+        /// <returns>响应内容</returns>
+        public static async Task<string> SendAsync(
+            string method,
+            string url,
+            string body)
+        {
+            try
+            {
+                // 处理占位符
+                url = ReplacePlaceholders(url, Common.GetValue);
+                body = ReplacePlaceholders(body, Common.GetValue);
+
+                using (var request = new HttpRequestMessage(
+                    method.ToUpper() == "POST" ? HttpMethod.Post : HttpMethod.Get,
+                    url
+                ))
+                {
+                    // 如果是 POST，写入请求体
+                    if (method.ToUpper() == "POST" && !string.IsNullOrWhiteSpace(body))
+                    {
+                        request.Content = new StringContent(body, Encoding.UTF8, "application/json");
+                    }
+                    var response = await _client.SendAsync(request);
+                    response.EnsureSuccessStatusCode();
+                    return await response.Content.ReadAsStringAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                HandyControl.Controls.Growl.Warning($"请求失败: {ex.Message}");
+                return $"请求失败: {ex.Message}";
+            }
+        }
+
+        /// <summary>
+        /// 替换字符串中 {{key}} 格式的内容
+        /// </summary>
+        /// <param name="template">包含 {{}} 的模板字符串</param>
+        /// <param name="getValueFunc">根据 key 获取替换值的函数</param>
+        /// <returns>替换后的字符串</returns>
+        public static string ReplacePlaceholders(string template, Func<string, string> getValueFunc)
+        {
+            if (string.IsNullOrEmpty(template)) return template;
+
+            // 正则匹配 {{xxx}}，支持空格，但不支持嵌套
+            // 示例：{{ username }}、{{dl}} 等
+            return Regex.Replace(template, @"\{\{\s*([^}]+?)\s*\}\}", match =>
+            {
+                string key = match.Groups[1].Value.Trim(); // 提取 key
+                string value = getValueFunc(key);          // 获取替换值
+                return value ?? ""; // 如果为 null，替换为空字符串
+            });
         }
     }
 
