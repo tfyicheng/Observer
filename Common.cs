@@ -1,9 +1,12 @@
 ﻿using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Interop;
@@ -19,6 +22,8 @@ namespace Observer
         public static DateTime? _startTime;
 
         public static NgrokHelper ngrok;
+
+        public static bool lockStatus;
 
         public static myIcon ic = new myIcon();
 
@@ -144,9 +149,9 @@ namespace Observer
             // 电源状态：Online / Offline
             PowerLineStatus lineStatus = status.PowerLineStatus;
 
-            Console.WriteLine($"电量: {batteryLifePercent}%");
-            Console.WriteLine($"剩余使用时间: {(batteryLifeRemaining > 0 ? batteryLifeRemaining / 60 + "分钟" : "未知")}");
-            Console.WriteLine($"电源状态: {lineStatus}");
+            //Console.WriteLine($"电量: {batteryLifePercent}%");
+            //Console.WriteLine($"剩余使用时间: {(batteryLifeRemaining > 0 ? batteryLifeRemaining / 60 + "分钟" : "未知")}");
+            //Console.WriteLine($"电源状态: {lineStatus}");
 
             switch (tl)
             {
@@ -213,7 +218,7 @@ namespace Observer
 
         public static bool HasUserActivityWithin(int seconds)
         {
-            if (LockScreenHelper.HasLockedInputWithin(seconds))
+            if (LockScreenHelper.LockedAndActiveWithinSeconds(seconds))
             {
                 return true;
             }
@@ -277,72 +282,169 @@ namespace Observer
             return false;
         }
 
-        private const string RunKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
-        private const string AppName = "Observer";
+
+        #region 对于需要管理员权限注册表方式不生效
+
+        // 获取应用程序的名称
+        private static readonly string AppName = Assembly.GetExecutingAssembly().GetName().Name;
+
+        // 获取应用程序的可执行文件路径
+        private static readonly string AppPath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+
+        // 注册表启动项的路径
+        private const string RunKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run";
 
         /// <summary>
-        /// 设置开机启动
+        /// 设置开机自启动
         /// </summary>
-        public static void EnableStartup()
-        {
-            try
-            {
-                string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(RunKey, true))
-                {
-                    if (key != null)
-                    {
-                        key.SetValue(AppName, exePath);
-                        HandyControl.Controls.Growl.Info("设置成功");
-                    }
-                }
-            }
-            catch (Exception ee)
-            {
-                HandyControl.Controls.Growl.Warning("设置失败:" + ee.Message);
-            }
-
-        }
-
-        /// <summary>
-        /// 取消开机启动
-        /// </summary>
-        public static void DisableStartup()
+        /// <param name="isEnabled">true为开启，false为关闭</param>
+        public static void SetAutoStart1(bool isEnabled)
         {
             try
             {
                 using (RegistryKey key = Registry.CurrentUser.OpenSubKey(RunKey, true))
                 {
-                    if (key != null)
+                    if (key == null) throw new Exception("无法打开注册表启动项。");
+
+                    if (isEnabled)
                     {
-                        key.DeleteValue(AppName, false);
-                        HandyControl.Controls.Growl.Info("设置成功");
+                        // 加上引号避免路径有空格时失效
+                        key.SetValue(AppName, $"\"{AppPath}\"");
+                    }
+                    else
+                    {
+                        if (key.GetValue(AppName) != null)
+                            key.DeleteValue(AppName, false);
                     }
                 }
             }
-            catch (Exception ee)
+            catch (Exception ex)
             {
-                HandyControl.Controls.Growl.Warning("设置失败:" + ee.Message);
+                Logger.WriteLine($"设置开机启动失败: {ex.Message}");
             }
-
         }
 
         /// <summary>
-        /// 判断是否已设置开机启动
+        /// 检查当前是否已设置为开机自启动
         /// </summary>
-        public static bool IsStartupEnabled()
+        /// <returns>true为已设置，false为未设置</returns>
+        public static bool IsAutoStartEnabled1()
         {
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(RunKey, false))
+            try
             {
-
-                if (key != null)
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(RunKey, false)) // false表示只读
                 {
-                    var value = key.GetValue(AppName);
-                    return value != null && value.ToString() == System.Reflection.Assembly.GetExecutingAssembly().Location;
+                    if (key == null)
+                    {
+                        return false;
+                    }
+
+                    // 检查是否存在以本程序名命名的值，并比对路径是否一致
+                    object value = key.GetValue(AppName);
+                    if (value != null && value.ToString().ToLower() == Path.GetFullPath(AppPath).ToLower())
+                    {
+                        return true;
+                    }
+                    return false;
                 }
+            }
+            catch (Exception ex)
+            {
+                // 发生异常时，默认返回false
+                Logger.WriteLine($"检查开机启动状态时出错: {ex.Message}");
                 return false;
             }
         }
+        #endregion
+
+        #region 开机启动（任务计划）
+
+        private static readonly string TaskName = "Observer_AutoStart"; // 计划任务名，可自定义
+        private static readonly string ExePath = Process.GetCurrentProcess().MainModule.FileName;
+
+        /// <summary>
+        /// 设置开机自启（通过计划任务）
+        /// </summary>
+        /// <param name="enable">true=开启，false=关闭</param>
+        public static void SetAutoStart(bool enable)
+        {
+            if (enable)
+            {
+                CreateTask();
+            }
+            else
+            {
+                DeleteTask();
+            }
+        }
+
+        /// <summary>
+        /// 检查是否已设置开机自启
+        /// </summary>
+        public static bool IsAutoStartEnabled()
+        {
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "schtasks",
+                    Arguments = $"/Query /TN \"{TaskName}\"",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using (var p = Process.Start(psi))
+                {
+                    string output = p.StandardOutput.ReadToEnd();
+                    string err = p.StandardError.ReadToEnd();
+                    p.WaitForExit();
+
+                    // 兼容所有 .NET 版本的写法
+                    return output.IndexOf(TaskName, StringComparison.OrdinalIgnoreCase) >= 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                // 可根据需要记录日志或抛出
+                Console.WriteLine("查询计划任务时出错: " + ex.Message);
+                return false;
+            }
+        }
+
+        private static void CreateTask()
+        {
+            // /RL HIGHEST = 以最高权限运行
+            string arguments = $"/Create /F /RL HIGHEST /SC ONLOGON /TN \"{TaskName}\" /TR \"\\\"{ExePath}\\\"\"";
+
+            RunSchtasks(arguments);
+        }
+
+        private static void DeleteTask()
+        {
+            string arguments = $"/Delete /F /TN \"{TaskName}\"";
+            RunSchtasks(arguments);
+        }
+
+        private static void RunSchtasks(string arguments)
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "schtasks",
+                Arguments = arguments,
+                Verb = "runas", // 确保以管理员身份执行
+                UseShellExecute = true,
+                CreateNoWindow = true
+            };
+
+            using (var p = Process.Start(psi))
+            {
+                p.WaitForExit();
+            }
+        }
+        #endregion
+
 
         public static string trigger;
 

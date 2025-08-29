@@ -14,7 +14,11 @@ namespace Observer
         public NgrokHelper(string ngrokPath)
         {
             if (string.IsNullOrEmpty(ngrokPath))
+            {
+                Logger.WriteLine("ngrok 路径不能为空");
                 throw new ArgumentException("ngrok 路径不能为空");
+            }
+
 
             this.ngrokPath = ngrokPath;
         }
@@ -68,7 +72,11 @@ namespace Observer
             }
 
             if (string.IsNullOrEmpty(url))
+            {
+                Logger.WriteLine("启动 ngrok 成功，但未获取到公网地址（可能超时）");
                 throw new Exception("启动 ngrok 成功，但未获取到公网地址（可能超时）");
+            }
+
 
             return url;
         }

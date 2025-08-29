@@ -10,6 +10,7 @@
     Width="500"
     Height="600"
     Background="#F8F8F8"
+    Closed="Main_Closed"
     Loaded="Main_Loaded"
     PreviewKeyDown="Window_PreviewKeyDown"
     ResizeMode="CanResize"
@@ -284,7 +285,7 @@
                                             VerticalAlignment="Center"
                                             DockPanel.Dock="Left"
                                             FontSize="13">
-                                            电量低于
+                                            电量等于
                                         </TextBlock>
                                         <hc:NumericUpDown
                                             Width="70"
@@ -824,6 +825,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
 
                             <Border Grid.Row="0" Style="{StaticResource CardStyle}">
@@ -845,6 +847,22 @@
                                             Text="开机启动" />
 
 
+                                    </StackPanel>
+
+                                    <StackPanel
+                                        Width="auto"
+                                        Margin="0,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <ToggleButton
+                                            Margin="5"
+                                            hc:VisualElement.HighlightBrush="#4CAEE1"
+                                            IsChecked="{Binding Run2}"
+                                            Style="{StaticResource ToggleButtonSwitch.Small}" />
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            FontSize="12"
+                                            Text="开启日志记录" />
                                     </StackPanel>
 
                                     <StackPanel

@@ -115,6 +115,7 @@
     <Compile Include="ConfigManager.cs" />
     <Compile Include="IntCompareToVisibilityConverter.cs" />
     <Compile Include="LockScreenHelper.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="MainModel.cs" />
     <Compile Include="NgrokHelper.cs" />
     <Compile Include="RelayCommand.cs" />

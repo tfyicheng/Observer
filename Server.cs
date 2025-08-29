@@ -23,13 +23,28 @@ namespace Observer
         {
             if (_server != null && _server.IsRunning)
             {
-                Console.WriteLine("服务器已在运行中...");
-                return;
-            }
 
-            var config = new Config { Port = port };
-            _server = new SimpleServer(config);
-            _server.Start();
+
+                if (_server.Port == port)
+                {
+                    Logger.WriteLine("服务器已在运行中...");
+                    return;
+                }
+                else
+                {
+                    Logger.WriteLine("端口改变...重新启动");
+                    _server.Stop();
+                    var config = new Config { Port = port };
+                    _server = new SimpleServer(config);
+                    _server.Start();
+                }
+            }
+            else
+            {
+                var config = new Config { Port = port };
+                _server = new SimpleServer(config);
+                _server.Start();
+            }
         }
 
         /// <summary>
@@ -40,7 +55,7 @@ namespace Observer
             if (_server != null && _server.IsRunning)
             {
                 _server.Stop();
-                Console.WriteLine("服务器已停止");
+                Logger.WriteLine("服务器已停止");
             }
         }
 
@@ -146,7 +161,7 @@ namespace Observer
         {
             listener.Start();
             IsRunning = true;
-            Console.WriteLine($"服务器已启动，监听端口 {config.Port}");
+            Logger.WriteLine($"服务器已启动，监听端口 {config.Port}");
             listener.BeginGetContext(OnRequest, null);
         }
 
@@ -170,7 +185,7 @@ namespace Observer
                 string responseText = "";
 
                 string catchDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "catch");
-
+                Logger.WriteLine($"接收请求：{path}");
                 switch (path)
                 {
                     case "":
@@ -286,7 +301,7 @@ namespace Observer
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Logger.WriteLine(e.Message);
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.Timers;
@@ -15,6 +16,7 @@ namespace Observer
         private int _tickCount = 0; // 记录定时器触发次数
         private int limite4Count = 0;
         private int limite4CountTotal = 0;
+        private int lastEb3Count = 0;
 
         public MainModel()
         {
@@ -70,20 +72,29 @@ namespace Observer
 
             _tickCount++;
             limite4Count++;
+            lastEb3Count++;
 
-            if (_tickCount >= 10)
+            if (_tickCount >= 5)
             {
                 _tickCount = 0; // 重置计数
 
                 CheckAllEnable();
 
-                Console.WriteLine("----------");
+                Console.WriteLine(DateTime.Now.ToString("HH:mm:ss") + "----------");
                 Common.PrintBatteryStatus();
-                if (Common.HasUserActivityWithin(5)) // 5秒内有输入
+                if (Common.HasUserActivityWithin(3)) // 5秒内有输入
                 {
                     Console.WriteLine("检测到键盘/鼠标被操作！");
                 }
-                Console.WriteLine(Common.IsInternetAvailable() ? "联网" : "断网");
+                Console.WriteLine("锁屏状态：" + Common.lockStatus);
+                //if (LockScreenHelper.LockedAndActiveWithinSeconds(3))
+                //{
+                //    Console.WriteLine("检测到键盘/鼠标被操作！");
+                //}
+                System.Threading.ThreadPool.QueueUserWorkItem(delegate
+                {
+                    Console.WriteLine(Common.IsInternetAvailable() ? "=联网" : "=断网");
+                });
             }
 
             if (Enable4 && Limite4 * 60 > 0)
@@ -93,6 +104,12 @@ namespace Observer
                     CheckEnable4();
                     limite4Count = 0;
                 }
+            }
+
+            if (lastEb3Count >= 60)
+            {
+                lastEb3Count = 0;
+                lastEb3 = 0;
             }
         }
 
@@ -108,20 +125,21 @@ namespace Observer
                 CheckEnable2();
             }
 
-
             if (Enable3)
             {
                 CheckEnable3();
             }
-
         }
+
+        private int lastEb1;
 
         private void CheckEnable1()
         {
             string dl = Common.PrintBatteryStatus("电量");
 
-            if (int.Parse(dl) < Limite1)
+            if (int.Parse(dl) == Limite1 && lastEb1 != Limite1)
             {
+                lastEb1 = Limite1;
                 Common.trigger = "电量";
                 Common.result = dl;
                 if (Enable11)
@@ -162,10 +180,13 @@ namespace Observer
             }
         }
 
+        private int lastEb3 = 0;
+
         private void CheckEnable3()
         {
-            if (Common.HasUserActivityWithin(5))
+            if (Common.HasUserActivityWithin(3) && lastEb3 == 0)
             {
+                lastEb3 = 1;
                 Common.trigger = "键鼠状态";
                 Common.result = "检测到键盘/鼠标被操作！";
                 if (Enable33)
@@ -200,8 +221,9 @@ namespace Observer
             {
                 return;
             }
+            Logger.WriteLine($"发送全局配置通知：条件：{Common.trigger}- 结果：{Common.result}");
             string result = await Server.SendAsync(RequestType0, RequestApi0, RequestBody0);
-            //HandyControl.Controls.Growl.Info(result);
+            Logger.WriteLine($"发送结果：{result}");
         }
 
         async private void SendReqt(string t, string a, string b = "")
@@ -210,8 +232,9 @@ namespace Observer
             {
                 return;
             }
+            Logger.WriteLine($"发送单独配置通知：条件：{Common.trigger}- 结果：{Common.result}");
             string result = await Server.SendAsync(t, a, b);
-            //HandyControl.Controls.Growl.Info(result);
+            Logger.WriteLine($"发送结果：{result}");
         }
 
         private string FormatTimeSpan(TimeSpan ts)
@@ -259,6 +282,7 @@ namespace Observer
 
         private bool run0;
         private bool run1;
+        private bool run2;
 
 
         public string RequestApi0
@@ -414,6 +438,7 @@ namespace Observer
             set { requestBody4 = value; OnPropertyChanged(nameof(RequestBody4)); }
         }
 
+        [JsonIgnore]
         public int RunStatus
         {
             get => runStatus;
@@ -445,11 +470,11 @@ namespace Observer
             {
                 if (value)
                 {
-                    Common.EnableStartup();
+                    Common.SetAutoStart(true);
                 }
                 else
                 {
-                    Common.DisableStartup();
+                    Common.SetAutoStart(false);
                 }
                 run0 = value;
                 OnPropertyChanged(nameof(Run0));
@@ -460,6 +485,12 @@ namespace Observer
         {
             get => run1;
             set { run1 = value; OnPropertyChanged(nameof(Run1)); }
+        }
+
+        public bool Run2
+        {
+            get => run2;
+            set { run2 = value; OnPropertyChanged(nameof(Run2)); }
         }
 
         #endregion
@@ -475,12 +506,20 @@ namespace Observer
             StopServerCommand = new RelayCommand(_ => StopServer());
         }
 
+        [JsonIgnore]
         public ICommand SendRequestCommand { get; set; }
-        public ICommand GetPathCommand { get; set; }
-        public ICommand CopyLinkCommand { get; set; }
-        public ICommand StartServerCommand { get; set; }
-        public ICommand StopServerCommand { get; set; }
 
+        [JsonIgnore]
+        public ICommand GetPathCommand { get; set; }
+
+        [JsonIgnore]
+        public ICommand CopyLinkCommand { get; set; }
+
+        [JsonIgnore]
+        public ICommand StartServerCommand { get; set; }
+
+        [JsonIgnore]
+        public ICommand StopServerCommand { get; set; }
 
         async private void SendRequest()
         {
@@ -492,7 +531,6 @@ namespace Observer
             string result = await Server.SendAsync(RequestType0, RequestApi0, RequestBody0);
             HandyControl.Controls.Growl.Info(result);
         }
-
 
         private void GetPath()
         {
@@ -546,7 +584,7 @@ namespace Observer
                     Common.ngrok = new NgrokHelper(ngrokPath);
                     string publicUrl = Common.ngrok.StartTunnel(localPort);
                     Link = publicUrl;
-                    Console.WriteLine("公网地址: " + publicUrl);
+                    Logger.WriteLine("公网地址: " + publicUrl);
                     //System.Threading.Thread.Sleep(3000);
                     RunStatus = 2;
                 }
@@ -559,11 +597,10 @@ namespace Observer
             catch (Exception ee)
             {
                 RunStatus = 0;
+                Logger.WriteLine("启动异常：" + ee.Message);
                 HandyControl.Controls.Growl.Warning("启动异常：" + ee.Message);
             }
         }
-
-
         private void StopServer()
         {
             RunStatus = 1;
