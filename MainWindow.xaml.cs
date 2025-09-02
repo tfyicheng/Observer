@@ -30,8 +30,13 @@ namespace Observer
                     ConfigManager.SaveThrottled(Common.model);
                 }
             };
+
             Common.model.initServer();
             Logger.WriteLine("程序启动");
+            if (Common.model.Run3)
+            {
+                Logger.CleanOldLogs();
+            }
         }
 
         protected override void OnClosing(CancelEventArgs e)

@@ -282,6 +282,12 @@ namespace Observer
                         WriteImageResponse(context, filess.First().FullName);
                         return;
 
+
+                    case "getphotolist":
+                        responseText = Common.GetPhotoList();
+                        context.Response.ContentType = "application/json";
+                        break;
+
                     case "help":
                         responseText = Common.getApiHtml(context.Request);
                         break;

@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.NetworkInformation;
@@ -129,9 +130,33 @@ namespace Observer
         <li><a href='http://{host}/getphotonow'>/getphotonow</a> : 拍照并返回结果</li>
         <li>/getphoto?file=文件名 : 获取拍照结果</li>
         <li><a href='http://{host}/getlatestphoto'>/getlatestphoto</a> : 获取最后一次拍照结果</li>
+        <li><a href='http://{host}/getphotolist'>/getphotolist</a> : 获取拍照结果列表</li>
     </ul>
 </body>
 </html>";
+        }
+
+        public static string GetPhotoList()
+        {
+            try
+            {
+                string catchDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "catch");
+                if (!System.IO.Directory.Exists(catchDir))
+                {
+                    return JsonConvert.SerializeObject(new { success = false, error = "没有找到照片目录" }, Formatting.Indented);
+                }
+
+                var files = Directory.GetFiles(catchDir, "*.jpg")
+                                     .Select(f => Path.GetFileName(f))
+                                     .OrderByDescending(f => f)  // 按文件名排序（新照片在前）
+                                     .ToList();
+
+                return JsonConvert.SerializeObject(new { success = true, photos = files }, Formatting.Indented);
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new { success = false, error = ex.Message }, Formatting.Indented);
+            }
         }
 
 
@@ -267,7 +292,7 @@ namespace Observer
         public static string AllStatus()
         {
             var status = System.Windows.Forms.SystemInformation.PowerStatus;
-            string re = $"运行时间：{GetRunTime()}\n电量：{status.BatteryLifePercent * 100}\n充电状态：{(status.PowerLineStatus == System.Windows.Forms.PowerLineStatus.Online ? "充电中" : "放电中")}\n预计可用时间(min)：{(status.BatteryLifeRemaining > 0 ? status.BatteryLifeRemaining / 60 : -1)}\n网络状态：{(Common.IsInternetAvailable() ? "在线" : "离线")}\n键鼠状态：{(Common.HasUserActivityWithin(5) ? "触发" : "静置")}\n网络定位：{GetLocationStatus()}";
+            string re = $"运行时间：{GetRunTime()}\n电量：{status.BatteryLifePercent * 100}\n充电状态：{(status.PowerLineStatus == System.Windows.Forms.PowerLineStatus.Online ? "充电中" : "放电中")}\n预计可用时间(min)：{(status.BatteryLifeRemaining > 0 ? status.BatteryLifeRemaining / 60 : -1)}\n网络状态：{(Common.IsInternetAvailable() ? "在线" : "离线")}\n键鼠状态：{(Common.HasUserActivityWithin(5) ? "触发" : "静置")}\n锁屏状态：{(Common.lockStatus ? "锁定" : "解锁")}\n网络定位：{GetLocationStatus()}";
             return re;
         }
 
@@ -476,6 +501,8 @@ namespace Observer
                     return model.RunStatus == 2 ? "运行中" : "未启动";
                 case "公网链接":
                     return model.Link;
+                case "锁屏状态":
+                    return Common.lockStatus ? "锁定" : "解锁";
                 default:
                     return $"[{key}?]";
             }

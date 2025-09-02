@@ -203,7 +203,7 @@
                                             VerticalAlignment="Center"
                                             DockPanel.Dock="Left"
                                             FontSize="13">
-                                            全局
+                                            全局配置
                                         </TextBlock>
 
 
@@ -227,7 +227,7 @@
                                             Foreground="Gray">
                                             ?
                                             <Label.ToolTip>
-                                                <ToolTip xml:space="preserve">请求中使用{{xxx}}自动替换对应信息 &#x0A;{{触发条件}} &#x0A;{{触发结果}} &#x0A;{{运行时间}} &#x0A;{{电量}} &#x0A;{{充电状态}} &#x0A;{{可用时间}} &#x0A;{{网络状态}} &#x0A;{{键鼠状态}} &#x0A;{{网络定位}} &#x0A;{{服务状态}} &#x0A;{{公网链接}}</ToolTip>
+                                                <ToolTip xml:space="preserve">请求中使用{{xxx}}自动替换对应信息 &#x0A;{{触发条件}} &#x0A;{{触发结果}} &#x0A;{{运行时间}} &#x0A;{{电量}} &#x0A;{{充电状态}} &#x0A;{{可用时间}} &#x0A;{{网络状态}} &#x0A;{{键鼠状态}} &#x0A;{{网络定位}} &#x0A;{{服务状态}} &#x0A;{{锁屏状态}} &#x0A;{{公网链接}}</ToolTip>
                                             </Label.ToolTip>
                                         </Label>
                                     </DockPanel>
@@ -482,8 +482,18 @@
                                             VerticalAlignment="Center"
                                             DockPanel.Dock="Left"
                                             FontSize="13">
-                                            键鼠触发(锁屏状态)
+                                            键鼠触发
                                         </TextBlock>
+
+                                        <hc:ComboBox
+                                            Grid.Column="0"
+                                            Width="95"
+                                            Margin="0,0,10,0"
+                                            hc:InfoElement.Placeholder="选择状态"
+                                            FontSize="13"
+                                            ItemsSource="{Binding lockTypes}"
+                                            SelectedIndex="0"
+                                            SelectedItem="{Binding Limite3}" />
 
 
                                         <ToggleButton
@@ -818,7 +828,7 @@
                 </hc:TransitioningContentControl>
             </TabItem>
 
-            <TabItem Header="全局配置">
+            <TabItem Header="设置">
                 <hc:TransitioningContentControl>
                     <hc:ScrollViewer IsInertiaEnabled="True">
                         <Grid>
@@ -851,7 +861,7 @@
 
                                     <StackPanel
                                         Width="auto"
-                                        Margin="0,0,0,0"
+                                        Margin="0,0,0,5"
                                         VerticalAlignment="Center"
                                         Orientation="Horizontal">
                                         <ToggleButton
@@ -863,6 +873,22 @@
                                             VerticalAlignment="Center"
                                             FontSize="12"
                                             Text="开启日志记录" />
+                                    </StackPanel>
+
+                                    <StackPanel
+                                        Width="auto"
+                                        Margin="0,0,0,5"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <ToggleButton
+                                            Margin="5"
+                                            hc:VisualElement.HighlightBrush="#4CAEE1"
+                                            IsChecked="{Binding Run3}"
+                                            Style="{StaticResource ToggleButtonSwitch.Small}" />
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            FontSize="12"
+                                            Text="日志定期清理(保留30天内)" />
                                     </StackPanel>
 
                                     <StackPanel

@@ -122,4 +122,9 @@ public static class LockScreenHelper
         if (!Common.lockStatus) return false;
         return GetIdleTime().TotalSeconds < seconds;
     }
+
+    public static bool ActiveWithinSeconds(int seconds)
+    {
+        return GetIdleTime().TotalSeconds < seconds;
+    }
 }

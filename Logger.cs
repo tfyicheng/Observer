@@ -58,5 +58,32 @@ namespace Observer
             {
             }
         }
+
+        /// <summary>
+        /// 删除指定天数之前的日志文件，默认保留30天
+        /// </summary>
+        /// <param name="days">保留天数</param>
+        public static void CleanOldLogs(int days = 30)
+        {
+            try
+            {
+                if (!Directory.Exists(_logDir)) return;
+
+                var files = Directory.GetFiles(_logDir, "*.txt");
+                foreach (var file in files)
+                {
+                    DateTime lastWriteTime = File.GetLastWriteTime(file);
+                    if (lastWriteTime < DateTime.Now.AddDays(-days))
+                    {
+                        File.Delete(file);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // 避免清理出错影响主逻辑
+                Console.WriteLine("清理日志时出错: " + ex.Message);
+            }
+        }
     }
 }

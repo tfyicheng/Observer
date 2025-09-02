@@ -38,6 +38,7 @@ namespace Observer
 
         public void initServer()
         {
+            Common.model.Link = "";
             if (Run1)
             {
                 StartServer();
@@ -45,6 +46,7 @@ namespace Observer
         }
 
         public String[] requestTypes { get; set; } = new String[] { "Get", "Post" };
+        public String[] lockTypes { get; set; } = new String[] { "锁屏状态", "解锁状态" };
 
         private string _runTime;
 
@@ -167,6 +169,7 @@ namespace Observer
                     return;
                 }
                 lastEb2 = dl;
+                lastEb1 = 0;//充电状态重置最后一次电量记录，解决只触发一次的问题
                 Common.trigger = "充电状态变化";
                 Common.result = dl;
                 if (Enable22)
@@ -184,18 +187,38 @@ namespace Observer
 
         private void CheckEnable3()
         {
-            if (Common.HasUserActivityWithin(3) && lastEb3 == 0)
+            if (Limite3 == "锁屏状态")
             {
-                lastEb3 = 1;
-                Common.trigger = "键鼠状态";
-                Common.result = "检测到键盘/鼠标被操作！";
-                if (Enable33)
+                if (Common.HasUserActivityWithin(3) && lastEb3 == 0)
                 {
-                    SendReqt(RequestType3, RequestApi3, RequestBody3);
+                    lastEb3 = 1;
+                    Common.trigger = "键鼠状态";
+                    Common.result = "检测到键盘/鼠标被操作！";
+                    if (Enable33)
+                    {
+                        SendReqt(RequestType3, RequestApi3, RequestBody3);
+                    }
+                    else
+                    {
+                        SendReq();
+                    }
                 }
-                else
+            }
+            if (Limite3 == "解锁状态")
+            {
+                if (LockScreenHelper.ActiveWithinSeconds(3) && lastEb3 == 0)
                 {
-                    SendReq();
+                    lastEb3 = 1;
+                    Common.trigger = "键鼠状态";
+                    Common.result = "检测到键盘/鼠标被操作！";
+                    if (Enable33)
+                    {
+                        SendReqt(RequestType3, RequestApi3, RequestBody3);
+                    }
+                    else
+                    {
+                        SendReq();
+                    }
                 }
             }
         }
@@ -239,7 +262,16 @@ namespace Observer
 
         private string FormatTimeSpan(TimeSpan ts)
         {
-            return $"{ts.Hours:D2}:{ts.Minutes:D2}:{ts.Seconds:D2}";
+            if (ts.TotalHours < 24)
+            {
+                // 小于 24 小时：正常 HH:mm:ss
+                return $"{ts.Hours:D2}:{ts.Minutes:D2}:{ts.Seconds:D2}";
+            }
+            else
+            {
+                // 大于等于 24 小时：显示 天 + HH:mm:ss
+                return $"{ts.Days} 天 {ts.Hours:D2}:{ts.Minutes:D2}:{ts.Seconds:D2}";
+            }
         }
 
         #region 页面配置字段
@@ -263,6 +295,7 @@ namespace Observer
 
         private bool enable3;
         private bool enable33;
+        private string limite3;
         private string requestApi3;
         private string requestType3;
         private string requestBody3;
@@ -283,6 +316,7 @@ namespace Observer
         private bool run0;
         private bool run1;
         private bool run2;
+        private bool run3;
 
 
         public string RequestApi0
@@ -382,6 +416,15 @@ namespace Observer
             get => enable33;
             set { enable33 = value; OnPropertyChanged(nameof(Enable33)); }
         }
+
+
+        public string Limite3
+        {
+            get => limite3;
+            set { limite3 = value; OnPropertyChanged(nameof(Limite3)); }
+        }
+
+
 
         public string RequestApi3
         {
@@ -493,6 +536,20 @@ namespace Observer
             set { run2 = value; OnPropertyChanged(nameof(Run2)); }
         }
 
+        public bool Run3
+        {
+            get => run3;
+            set
+            {
+                run3 = value;
+                if (value)
+                {
+                    Logger.CleanOldLogs();
+                }
+                OnPropertyChanged(nameof(Run3));
+            }
+        }
+
         #endregion
 
         #region 命令
@@ -528,6 +585,8 @@ namespace Observer
                 HandyControl.Controls.Growl.Warning("请先设置请求配置");
                 return;
             }
+            Common.trigger = "测试动作";
+            Common.result = "测试结果";
             string result = await Server.SendAsync(RequestType0, RequestApi0, RequestBody0);
             HandyControl.Controls.Growl.Info(result);
         }
