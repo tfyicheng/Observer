@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -127,15 +128,60 @@ namespace Observer
                 {
                     case 0x7: // WTS_SESSION_LOCK
                         //MessageBox.Show("系统已锁屏"); 
-                        Common.lockStatus = true;
+                        //Common.lockStatus = true;
+                        SetStatus(true);
                         break;
                     case 0x8: // WTS_SESSION_UNLOCK
                         //MessageBox.Show("系统已解锁");
-                        Common.lockStatus = false;
+                        //Common.lockStatus = false;
+                        SetStatus(false);
                         break;
                 }
             }
             return IntPtr.Zero;
+        }
+
+        private void SetStatus(bool st)
+        {
+            Common.lockStatus = st;
+            Common.AllowCheck = false;
+            ThreadPool.QueueUserWorkItem(delegate
+            {
+                Thread.Sleep(20000);
+                Common.AllowCheck = true;
+            });
+            return;
+            if (Common.model.Limite3 == "锁屏状态")
+            {
+                if (st)
+                {
+                    ThreadPool.QueueUserWorkItem(delegate
+                    {
+                        Thread.Sleep(30000);
+                        Common.lockStatus = st;
+                    });
+                }
+                else
+                {
+                    Common.lockStatus = st;
+                }
+            }
+
+            if (Common.model.Limite3 == "解锁状态")
+            {
+                if (st)
+                {
+                    Common.lockStatus = st;
+                }
+                else
+                {
+                    ThreadPool.QueueUserWorkItem(delegate
+                    {
+                        Thread.Sleep(30000);
+                        Common.lockStatus = st;
+                    });
+                }
+            }
         }
 
         #region Windows API

@@ -26,6 +26,8 @@ namespace Observer
 
         public static bool lockStatus;
 
+        public static bool AllowCheck = true;
+
         public static myIcon ic = new myIcon();
 
         [DllImport("user32.dll")]

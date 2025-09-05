@@ -84,7 +84,7 @@ namespace Observer
 
                 Console.WriteLine(DateTime.Now.ToString("HH:mm:ss") + "----------");
                 Common.PrintBatteryStatus();
-                if (Common.HasUserActivityWithin(3)) // 5秒内有输入
+                if (Common.HasUserActivityWithin(3)) // n秒内有输入
                 {
                     Console.WriteLine("检测到键盘/鼠标被操作！");
                 }
@@ -93,10 +93,10 @@ namespace Observer
                 //{
                 //    Console.WriteLine("检测到键盘/鼠标被操作！");
                 //}
-                System.Threading.ThreadPool.QueueUserWorkItem(delegate
-                {
-                    Console.WriteLine(Common.IsInternetAvailable() ? "=联网" : "=断网");
-                });
+                //System.Threading.ThreadPool.QueueUserWorkItem(delegate
+                //{
+                //    Console.WriteLine(Common.IsInternetAvailable() ? "=联网" : "=断网");
+                //});
             }
 
             if (Enable4 && Limite4 * 60 > 0)
@@ -187,12 +187,18 @@ namespace Observer
 
         private void CheckEnable3()
         {
+            //Console.WriteLine(DateTime.Now.ToString("HH:mm:ss") + "---判断执行：" + Common.AllowCheck);
+            if (!Common.AllowCheck)
+            {
+                return;
+            }
+
             if (Limite3 == "锁屏状态")
             {
                 if (Common.HasUserActivityWithin(3) && lastEb3 == 0)
                 {
                     lastEb3 = 1;
-                    Common.trigger = "键鼠状态";
+                    Common.trigger = "键鼠状态(锁屏)";
                     Common.result = "检测到键盘/鼠标被操作！";
                     if (Enable33)
                     {
@@ -209,7 +215,7 @@ namespace Observer
                 if (LockScreenHelper.ActiveWithinSeconds(3) && lastEb3 == 0)
                 {
                     lastEb3 = 1;
-                    Common.trigger = "键鼠状态";
+                    Common.trigger = "键鼠状态(解锁)";
                     Common.result = "检测到键盘/鼠标被操作！";
                     if (Enable33)
                     {

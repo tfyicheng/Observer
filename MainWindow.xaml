@@ -888,7 +888,7 @@
                                         <TextBlock
                                             VerticalAlignment="Center"
                                             FontSize="12"
-                                            Text="日志定期清理(保留30天内)" />
+                                            Text="日志自动清理(保留30天内)" />
                                     </StackPanel>
 
                                     <StackPanel
