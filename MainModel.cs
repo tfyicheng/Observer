@@ -2,9 +2,10 @@
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
-using System.Timers;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using Timer = System.Timers.Timer;
 
 namespace Observer
 {
@@ -17,6 +18,10 @@ namespace Observer
         private int limite4Count = 0;
         private int limite4CountTotal = 0;
         private int lastEb3Count = 0;
+        private bool limite5 = true;
+        private int flag6 = 0;
+        private int flag7 = 0;
+        private int flag8 = 0;
 
         public MainModel()
         {
@@ -97,6 +102,7 @@ namespace Observer
                 //{
                 //    Console.WriteLine(Common.IsInternetAvailable() ? "=联网" : "=断网");
                 //});
+
             }
 
             if (Enable4 && Limite4 * 60 > 0)
@@ -112,6 +118,33 @@ namespace Observer
             {
                 lastEb3Count = 0;
                 lastEb3 = 0;
+            }
+
+            if (flag6 > 0)
+            {
+                flag6 += 1;
+                if (flag6 >= 61)
+                {
+                    flag6 = 0;
+                }
+            }
+
+            if (flag7 > 0)
+            {
+                flag7 += 1;
+                if (flag7 >= 61)
+                {
+                    flag7 = 0;
+                }
+            }
+
+            if (flag8 > 0)
+            {
+                flag8 += 1;
+                if (flag8 >= 61)
+                {
+                    flag8 = 0;
+                }
             }
         }
 
@@ -130,6 +163,27 @@ namespace Observer
             if (Enable3)
             {
                 CheckEnable3();
+            }
+
+            if (Enable5)
+            {
+                CheckEnable5();
+            }
+
+            if (Enable6)
+            {
+                CheckEnable6();
+            }
+
+            if (Enable7)
+            {
+                CheckEnable7();
+            }
+
+
+            if (Enable8)
+            {
+                CheckEnable8();
             }
         }
 
@@ -244,6 +298,88 @@ namespace Observer
             }
         }
 
+        private void CheckEnable5()
+        {
+            if (limite5)
+            {
+                ThreadPool.QueueUserWorkItem(delegate
+                {
+                    Thread.Sleep(3000);
+                    Common.trigger = "初次启动触发";
+                    limite5 = false;
+                    if (Enable55)
+                    {
+                        SendReqt(RequestType5, RequestApi5, RequestBody5);
+                    }
+                    else
+                    {
+                        SendReq();
+                    }
+                });
+            }
+        }
+
+        private void CheckEnable6()
+        {
+            int res = (int)Common.monitor.GetCpuTemperature();
+
+            if (res >= Limite6 && flag6 == 0)
+            {
+                flag6 = 1;
+
+                Common.trigger = "CPU温度";
+                Common.result = res.ToString();
+                if (Enable66)
+                {
+                    SendReqt(RequestType6, RequestApi6, RequestBody6);
+                }
+                else
+                {
+                    SendReq();
+                }
+            }
+        }
+
+        private void CheckEnable7()
+        {
+            int res = (int)Common.monitor.GetCpuUsage();
+
+            if (res >= Limite7 && flag7 == 0)
+            {
+                flag7 = 1;
+                Common.trigger = "CPU使用率";
+                Common.result = res.ToString();
+                if (Enable77)
+                {
+                    SendReqt(RequestType7, RequestApi7, RequestBody7);
+                }
+                else
+                {
+                    SendReq();
+                }
+            }
+        }
+
+        private void CheckEnable8()
+        {
+            int res = (int)Common.monitor.GetMemoryUsage();
+
+            if (res >= Limite8 && flag8 == 0)
+            {
+                flag8 = 1;
+                Common.trigger = "内存使用率";
+                Common.result = res.ToString();
+                if (Enable88)
+                {
+                    SendReqt(RequestType8, RequestApi8, RequestBody8);
+                }
+                else
+                {
+                    SendReq();
+                }
+            }
+        }
+
         async private void SendReq()
         {
             if (String.IsNullOrEmpty(RequestType0) || String.IsNullOrEmpty(RequestApi0))
@@ -313,6 +449,34 @@ namespace Observer
         private string requestApi4;
         private string requestType4;
         private string requestBody4;
+
+
+        private bool enable5;
+        private bool enable55;
+        private string requestApi5;
+        private string requestType5;
+        private string requestBody5;
+
+        private bool enable6;
+        private bool enable66;
+        private int limite6;
+        private string requestApi6;
+        private string requestType6;
+        private string requestBody6;
+
+        private bool enable7;
+        private bool enable77;
+        private int limite7;
+        private string requestApi7;
+        private string requestType7;
+        private string requestBody7;
+
+        private bool enable8;
+        private bool enable88;
+        private int limite8;
+        private string requestApi8;
+        private string requestType8;
+        private string requestBody8;
 
         private int runStatus;//0 未启动，1 启动中，2 已启动
         private string port;
@@ -487,6 +651,148 @@ namespace Observer
             set { requestBody4 = value; OnPropertyChanged(nameof(RequestBody4)); }
         }
 
+
+        public bool Enable5
+        {
+            get => enable5;
+            set { enable5 = value; OnPropertyChanged(nameof(Enable5)); }
+        }
+
+        public bool Enable55
+        {
+            get => enable55;
+            set { enable55 = value; OnPropertyChanged(nameof(Enable55)); }
+        }
+
+
+        public string RequestApi5
+        {
+            get => requestApi5;
+            set { requestApi5 = value; OnPropertyChanged(nameof(RequestApi5)); }
+        }
+
+        public string RequestType5
+        {
+            get => requestType5;
+            set { requestType5 = value; OnPropertyChanged(nameof(RequestType5)); }
+        }
+
+        public string RequestBody5
+        {
+            get => requestBody5;
+            set { requestBody5 = value; OnPropertyChanged(nameof(RequestBody5)); }
+        }
+
+        public bool Enable6
+        {
+            get => enable6;
+            set { enable6 = value; OnPropertyChanged(nameof(Enable6)); }
+        }
+
+        public bool Enable66
+        {
+            get => enable66;
+            set { enable66 = value; OnPropertyChanged(nameof(Enable66)); }
+        }
+
+        public int Limite6
+        {
+            get => limite6;
+            set { limite6 = value; OnPropertyChanged(nameof(Limite6)); }
+        }
+
+        public string RequestApi6
+        {
+            get => requestApi6;
+            set { requestApi6 = value; OnPropertyChanged(nameof(RequestApi6)); }
+        }
+
+        public string RequestType6
+        {
+            get => requestType6;
+            set { requestType6 = value; OnPropertyChanged(nameof(RequestType6)); }
+        }
+
+        public string RequestBody6
+        {
+            get => requestBody6;
+            set { requestBody6 = value; OnPropertyChanged(nameof(RequestBody6)); }
+        }
+
+        public bool Enable7
+        {
+            get => enable7;
+            set { enable7 = value; OnPropertyChanged(nameof(Enable7)); }
+        }
+
+        public bool Enable77
+        {
+            get => enable77;
+            set { enable77 = value; OnPropertyChanged(nameof(Enable77)); }
+        }
+
+        public int Limite7
+        {
+            get => limite7;
+            set { limite7 = value; OnPropertyChanged(nameof(Limite7)); }
+        }
+
+        public string RequestApi7
+        {
+            get => requestApi7;
+            set { requestApi7 = value; OnPropertyChanged(nameof(RequestApi7)); }
+        }
+
+        public string RequestType7
+        {
+            get => requestType7;
+            set { requestType7 = value; OnPropertyChanged(nameof(RequestType7)); }
+        }
+
+        public string RequestBody7
+        {
+            get => requestBody7;
+            set { requestBody7 = value; OnPropertyChanged(nameof(RequestBody7)); }
+        }
+
+        public bool Enable8
+        {
+            get => enable8;
+            set { enable8 = value; OnPropertyChanged(nameof(Enable8)); }
+        }
+
+        public bool Enable88
+        {
+            get => enable88;
+            set { enable88 = value; OnPropertyChanged(nameof(Enable88)); }
+        }
+
+
+
+        public int Limite8
+        {
+            get => limite8;
+            set { limite8 = value; OnPropertyChanged(nameof(Limite8)); }
+        }
+
+        public string RequestApi8
+        {
+            get => requestApi8;
+            set { requestApi8 = value; OnPropertyChanged(nameof(RequestApi8)); }
+        }
+
+        public string RequestType8
+        {
+            get => requestType8;
+            set { requestType8 = value; OnPropertyChanged(nameof(RequestType8)); }
+        }
+
+        public string RequestBody8
+        {
+            get => requestBody8;
+            set { requestBody8 = value; OnPropertyChanged(nameof(RequestBody8)); }
+        }
+
         [JsonIgnore]
         public int RunStatus
         {
@@ -567,6 +873,8 @@ namespace Observer
             CopyLinkCommand = new RelayCommand(_ => CopyLink());
             StartServerCommand = new RelayCommand(_ => StartServer());
             StopServerCommand = new RelayCommand(_ => StopServer());
+            OpenLogCommand = new RelayCommand(_ => OpenLog());
+            OpenPhotoCommand = new RelayCommand(_ => OpenPhoto());
         }
 
         [JsonIgnore]
@@ -583,6 +891,10 @@ namespace Observer
 
         [JsonIgnore]
         public ICommand StopServerCommand { get; set; }
+        [JsonIgnore]
+        public ICommand OpenLogCommand { get; set; }
+        [JsonIgnore]
+        public ICommand OpenPhotoCommand { get; set; }
 
         async private void SendRequest()
         {
@@ -666,6 +978,7 @@ namespace Observer
                 HandyControl.Controls.Growl.Warning("启动异常：" + ee.Message);
             }
         }
+
         private void StopServer()
         {
             RunStatus = 1;
@@ -674,6 +987,18 @@ namespace Observer
             Link = "";
             //System.Threading.Thread.Sleep(3000);
             RunStatus = 0;
+        }
+
+        private void OpenLog()
+        {
+            string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log");
+            Common.OpenFolder(path);
+        }
+
+        private void OpenPhoto()
+        {
+            string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "catch");
+            Common.OpenFolder(path);
         }
 
         #endregion

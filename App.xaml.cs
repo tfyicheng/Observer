@@ -27,7 +27,7 @@ namespace Observer
             //this.notifyIcon.BalloonTipText = "running...";
 
             //鼠标放在图标上时显示的文字
-            this.notifyIcon.Text = "Observer-视奸助手V1.0👻";
+            this.notifyIcon.Text = "Observer-视奸助手V1.5👻";
 
             //图标图片的位置，注意这里要用绝对路径
             var assembly = Assembly.GetExecutingAssembly();

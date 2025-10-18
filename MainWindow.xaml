@@ -186,6 +186,10 @@
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
 
                             <Border Grid.Row="0" Style="{StaticResource CardStyle}">
@@ -227,7 +231,7 @@
                                             Foreground="Gray">
                                             ?
                                             <Label.ToolTip>
-                                                <ToolTip xml:space="preserve">请求中使用{{xxx}}自动替换对应信息 &#x0A;{{触发条件}} &#x0A;{{触发结果}} &#x0A;{{运行时间}} &#x0A;{{电量}} &#x0A;{{充电状态}} &#x0A;{{可用时间}} &#x0A;{{网络状态}} &#x0A;{{键鼠状态}} &#x0A;{{网络定位}} &#x0A;{{服务状态}} &#x0A;{{锁屏状态}} &#x0A;{{公网链接}}</ToolTip>
+                                                <ToolTip xml:space="preserve">请求中使用{{xxx}}自动替换对应信息 &#x0A;{{触发条件}} &#x0A;{{触发结果}} &#x0A;{{运行时间}} &#x0A;{{电量}} &#x0A;{{充电状态}} &#x0A;{{可用时间}} &#x0A;{{网络状态}} &#x0A;{{键鼠状态}} &#x0A;{{网络定位}} &#x0A;{{服务状态}} &#x0A;{{锁屏状态}} &#x0A;{{公网链接}} &#x0A;{{硬件状态}}</ToolTip>
                                             </Label.ToolTip>
                                         </Label>
                                     </DockPanel>
@@ -285,7 +289,7 @@
                                             VerticalAlignment="Center"
                                             DockPanel.Dock="Left"
                                             FontSize="13">
-                                            电量等于
+                                            电量 =
                                         </TextBlock>
                                         <hc:NumericUpDown
                                             Width="70"
@@ -675,6 +679,406 @@
                                 </Grid>
                             </Border>
 
+                            <Border Grid.Row="5" Style="{StaticResource CardStyle}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <DockPanel Grid.Row="0" LastChildFill="False">
+                                        <TextBlock
+                                            Margin="0,0,5,0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            DockPanel.Dock="Left"
+                                            FontSize="13">
+                                            软件初次启动
+                                        </TextBlock>
+
+                                        <ToggleButton
+                                            x:Name="Enable5"
+                                            Margin="5"
+                                            hc:VisualElement.HighlightBrush="#4CAEE1"
+                                            DockPanel.Dock="Right"
+                                            IsChecked="{Binding Enable5}"
+                                            Style="{StaticResource ToggleButtonSwitch.Small}" />
+                                        <TextBlock
+                                            Margin="5,0,0,0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            DockPanel.Dock="Right"
+                                            FontSize="12">
+                                            启用
+                                        </TextBlock>
+
+                                        <TextBlock
+                                            Margin="5"
+                                            DockPanel.Dock="Right"
+                                            Foreground="#E3E3E3">
+                                            |
+                                        </TextBlock>
+                                        <ToggleButton
+                                            x:Name="Enable55"
+                                            Margin="5"
+                                            hc:VisualElement.HighlightBrush="#4CAEE1"
+                                            DockPanel.Dock="Right"
+                                            IsChecked="{Binding Enable55}"
+                                            Style="{StaticResource ToggleButtonSwitch.Small}" />
+                                        <TextBlock
+                                            Margin="0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            DockPanel.Dock="Right"
+                                            FontSize="12">
+                                            单独配置
+                                        </TextBlock>
+                                    </DockPanel>
+
+                                    <Grid Grid.Row="1" Visibility="{Binding IsChecked, ElementName=Enable55, Converter={StaticResource BoolToVis}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <hc:ComboBox
+                                            Grid.Column="0"
+                                            Width="100"
+                                            Margin="0,10,10,0"
+                                            hc:InfoElement.Placeholder="请求类型"
+                                            ItemsSource="{Binding requestTypes}"
+                                            SelectedIndex="0"
+                                            SelectedItem="{Binding RequestType5}" />
+
+
+                                        <hc:TextBox
+                                            Grid.Column="1"
+                                            Margin="0,10,0,0"
+                                            hc:InfoElement.Placeholder="请求接口"
+                                            hc:InfoElement.ShowClearButton="True"
+                                            Text="{Binding RequestApi5}" />
+                                    </Grid>
+
+                                    <hc:TextBox
+                                        Grid.Row="2"
+                                        MaxHeight="150"
+                                        Margin="0,10,0,0"
+                                        hc:InfoElement.Placeholder="请求体"
+                                        hc:InfoElement.ShowClearButton="True"
+                                        AcceptsReturn="True"
+                                        Text="{Binding RequestBody5}"
+                                        TextWrapping="Wrap"
+                                        VerticalScrollBarVisibility="Visible"
+                                        Visibility="{Binding IsChecked, ElementName=Enable55, Converter={StaticResource BoolToVis}}" />
+                                </Grid>
+
+                            </Border>
+
+                            <Border Grid.Row="6" Style="{StaticResource CardStyle}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <DockPanel Grid.Row="0" LastChildFill="False">
+                                        <TextBlock
+                                            Margin="0,0,5,0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            DockPanel.Dock="Left"
+                                            FontSize="13">
+                                            CPU温度 >=
+                                        </TextBlock>
+                                        <hc:NumericUpDown
+                                            Width="70"
+                                            Maximum="100"
+                                            Minimum="0"
+                                            Value="{Binding Limite6}" />
+
+                                        <ToggleButton
+                                            x:Name="Enable6"
+                                            Margin="5"
+                                            hc:VisualElement.HighlightBrush="#4CAEE1"
+                                            DockPanel.Dock="Right"
+                                            IsChecked="{Binding Enable6}"
+                                            Style="{StaticResource ToggleButtonSwitch.Small}" />
+                                        <TextBlock
+                                            Margin="5,0,0,0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            DockPanel.Dock="Right"
+                                            FontSize="12">
+                                            启用
+                                        </TextBlock>
+
+                                        <TextBlock
+                                            Margin="5"
+                                            DockPanel.Dock="Right"
+                                            Foreground="#E3E3E3">
+                                            |
+                                        </TextBlock>
+                                        <ToggleButton
+                                            x:Name="Enable66"
+                                            Margin="5"
+                                            hc:VisualElement.HighlightBrush="#4CAEE1"
+                                            DockPanel.Dock="Right"
+                                            IsChecked="{Binding Enable66}"
+                                            Style="{StaticResource ToggleButtonSwitch.Small}" />
+                                        <TextBlock
+                                            Margin="0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            DockPanel.Dock="Right"
+                                            FontSize="12">
+                                            单独配置
+                                        </TextBlock>
+                                    </DockPanel>
+
+                                    <Grid Grid.Row="1" Visibility="{Binding IsChecked, ElementName=Enable66, Converter={StaticResource BoolToVis}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <hc:ComboBox
+                                            Grid.Column="0"
+                                            Width="100"
+                                            Margin="0,10,10,0"
+                                            hc:InfoElement.Placeholder="请求类型"
+                                            ItemsSource="{Binding requestTypes}"
+                                            SelectedIndex="0"
+                                            SelectedItem="{Binding RequestType6}" />
+
+
+                                        <hc:TextBox
+                                            Grid.Column="1"
+                                            Margin="0,10,0,0"
+                                            hc:InfoElement.Placeholder="请求接口"
+                                            hc:InfoElement.ShowClearButton="True"
+                                            Text="{Binding RequestApi6}" />
+                                    </Grid>
+
+                                    <hc:TextBox
+                                        Grid.Row="2"
+                                        MaxHeight="150"
+                                        Margin="0,10,0,0"
+                                        hc:InfoElement.Placeholder="请求体"
+                                        hc:InfoElement.ShowClearButton="True"
+                                        AcceptsReturn="True"
+                                        Text="{Binding RequestBody6}"
+                                        TextWrapping="Wrap"
+                                        VerticalScrollBarVisibility="Visible"
+                                        Visibility="{Binding IsChecked, ElementName=Enable66, Converter={StaticResource BoolToVis}}" />
+                                </Grid>
+
+                            </Border>
+
+
+                            <Border Grid.Row="7" Style="{StaticResource CardStyle}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <DockPanel Grid.Row="0" LastChildFill="False">
+                                        <TextBlock
+                                            Margin="0,0,5,0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            DockPanel.Dock="Left"
+                                            FontSize="13">
+                                            CPU使用率 >=
+                                        </TextBlock>
+                                        <hc:NumericUpDown
+                                            Width="70"
+                                            Maximum="100"
+                                            Minimum="0"
+                                            Value="{Binding Limite7}" />
+
+                                        <ToggleButton
+                                            x:Name="Enable7"
+                                            Margin="5"
+                                            hc:VisualElement.HighlightBrush="#4CAEE1"
+                                            DockPanel.Dock="Right"
+                                            IsChecked="{Binding Enable7}"
+                                            Style="{StaticResource ToggleButtonSwitch.Small}" />
+                                        <TextBlock
+                                            Margin="5,0,0,0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            DockPanel.Dock="Right"
+                                            FontSize="12">
+                                            启用
+                                        </TextBlock>
+
+                                        <TextBlock
+                                            Margin="5"
+                                            DockPanel.Dock="Right"
+                                            Foreground="#E3E3E3">
+                                            |
+                                        </TextBlock>
+                                        <ToggleButton
+                                            x:Name="Enable77"
+                                            Margin="5"
+                                            hc:VisualElement.HighlightBrush="#4CAEE1"
+                                            DockPanel.Dock="Right"
+                                            IsChecked="{Binding Enable77}"
+                                            Style="{StaticResource ToggleButtonSwitch.Small}" />
+                                        <TextBlock
+                                            Margin="0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            DockPanel.Dock="Right"
+                                            FontSize="12">
+                                            单独配置
+                                        </TextBlock>
+                                    </DockPanel>
+
+                                    <Grid Grid.Row="1" Visibility="{Binding IsChecked, ElementName=Enable77, Converter={StaticResource BoolToVis}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <hc:ComboBox
+                                            Grid.Column="0"
+                                            Width="100"
+                                            Margin="0,10,10,0"
+                                            hc:InfoElement.Placeholder="请求类型"
+                                            ItemsSource="{Binding requestTypes}"
+                                            SelectedIndex="0"
+                                            SelectedItem="{Binding RequestType7}" />
+
+
+                                        <hc:TextBox
+                                            Grid.Column="1"
+                                            Margin="0,10,0,0"
+                                            hc:InfoElement.Placeholder="请求接口"
+                                            hc:InfoElement.ShowClearButton="True"
+                                            Text="{Binding RequestApi7}" />
+                                    </Grid>
+
+                                    <hc:TextBox
+                                        Grid.Row="2"
+                                        MaxHeight="150"
+                                        Margin="0,10,0,0"
+                                        hc:InfoElement.Placeholder="请求体"
+                                        hc:InfoElement.ShowClearButton="True"
+                                        AcceptsReturn="True"
+                                        Text="{Binding RequestBody7}"
+                                        TextWrapping="Wrap"
+                                        VerticalScrollBarVisibility="Visible"
+                                        Visibility="{Binding IsChecked, ElementName=Enable77, Converter={StaticResource BoolToVis}}" />
+                                </Grid>
+
+                            </Border>
+
+
+                            <Border Grid.Row="8" Style="{StaticResource CardStyle}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <DockPanel Grid.Row="0" LastChildFill="False">
+                                        <TextBlock
+                                            Margin="0,0,5,0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            DockPanel.Dock="Left"
+                                            FontSize="13">
+                                            内存使用率 >=
+                                        </TextBlock>
+                                        <hc:NumericUpDown
+                                            Width="70"
+                                            Maximum="100"
+                                            Minimum="0"
+                                            Value="{Binding Limite8}" />
+
+                                        <ToggleButton
+                                            x:Name="Enable8"
+                                            Margin="5"
+                                            hc:VisualElement.HighlightBrush="#4CAEE1"
+                                            DockPanel.Dock="Right"
+                                            IsChecked="{Binding Enable8}"
+                                            Style="{StaticResource ToggleButtonSwitch.Small}" />
+                                        <TextBlock
+                                            Margin="5,0,0,0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            DockPanel.Dock="Right"
+                                            FontSize="12">
+                                            启用
+                                        </TextBlock>
+
+                                        <TextBlock
+                                            Margin="5"
+                                            DockPanel.Dock="Right"
+                                            Foreground="#E3E3E3">
+                                            |
+                                        </TextBlock>
+                                        <ToggleButton
+                                            x:Name="Enable88"
+                                            Margin="5"
+                                            hc:VisualElement.HighlightBrush="#4CAEE1"
+                                            DockPanel.Dock="Right"
+                                            IsChecked="{Binding Enable88}"
+                                            Style="{StaticResource ToggleButtonSwitch.Small}" />
+                                        <TextBlock
+                                            Margin="0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            DockPanel.Dock="Right"
+                                            FontSize="12">
+                                            单独配置
+                                        </TextBlock>
+                                    </DockPanel>
+
+                                    <Grid Grid.Row="1" Visibility="{Binding IsChecked, ElementName=Enable88, Converter={StaticResource BoolToVis}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <hc:ComboBox
+                                            Grid.Column="0"
+                                            Width="100"
+                                            Margin="0,10,10,0"
+                                            hc:InfoElement.Placeholder="请求类型"
+                                            ItemsSource="{Binding requestTypes}"
+                                            SelectedIndex="0"
+                                            SelectedItem="{Binding RequestType8}" />
+
+
+                                        <hc:TextBox
+                                            Grid.Column="1"
+                                            Margin="0,10,0,0"
+                                            hc:InfoElement.Placeholder="请求接口"
+                                            hc:InfoElement.ShowClearButton="True"
+                                            Text="{Binding RequestApi8}" />
+                                    </Grid>
+
+                                    <hc:TextBox
+                                        Grid.Row="2"
+                                        MaxHeight="150"
+                                        Margin="0,10,0,0"
+                                        hc:InfoElement.Placeholder="请求体"
+                                        hc:InfoElement.ShowClearButton="True"
+                                        AcceptsReturn="True"
+                                        Text="{Binding RequestBody8}"
+                                        TextWrapping="Wrap"
+                                        VerticalScrollBarVisibility="Visible"
+                                        Visibility="{Binding IsChecked, ElementName=Enable88, Converter={StaticResource BoolToVis}}" />
+                                </Grid>
+                            </Border>
+
                             <!--<Button Grid.Row="2" Click="test">test</Button>
                             <Button Grid.Row="3" Click="test2">test2</Button>
                             <Label
@@ -828,7 +1232,7 @@
                 </hc:TransitioningContentControl>
             </TabItem>
 
-            <TabItem Header="设置">
+            <TabItem Header="全局设置">
                 <hc:TransitioningContentControl>
                     <hc:ScrollViewer IsInertiaEnabled="True">
                         <Grid>
@@ -840,73 +1244,108 @@
 
                             <Border Grid.Row="0" Style="{StaticResource CardStyle}">
 
-                                <WrapPanel Orientation="Vertical">
-                                    <StackPanel
-                                        Width="auto"
-                                        Margin="0,0,0,5"
-                                        VerticalAlignment="Center"
-                                        Orientation="Horizontal">
-                                        <ToggleButton
-                                            Margin="5"
-                                            hc:VisualElement.HighlightBrush="#4CAEE1"
-                                            IsChecked="{Binding Run0}"
-                                            Style="{StaticResource ToggleButtonSwitch.Small}" />
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            FontSize="12"
-                                            Text="开机启动" />
 
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <StackPanel
+                                        Grid.Row="0"
+                                        FlowDirection="RightToLeft"
+                                        Orientation="Horizontal"
+                                        Visibility="{Binding RunStatus, Converter={StaticResource IntToVis}, ConverterParameter=0|2}">
+
+                                        <Button
+                                            Margin="0,0,10,0"
+                                            hc:BorderElement.CornerRadius="8"
+                                            Command="{Binding OpenLogCommand}"
+                                            Cursor="Hand"
+                                            Style="{StaticResource ButtonInfo}">
+                                            日志文件
+                                        </Button>
+                                        <Button
+                                            Margin="0,0,10,0"
+                                            hc:BorderElement.CornerRadius="8"
+                                            Command="{Binding OpenPhotoCommand}"
+                                            Cursor="Hand"
+                                            Style="{StaticResource ButtonInfo}">
+                                            拍照文件
+                                        </Button>
 
                                     </StackPanel>
 
-                                    <StackPanel
-                                        Width="auto"
-                                        Margin="0,0,0,5"
-                                        VerticalAlignment="Center"
-                                        Orientation="Horizontal">
-                                        <ToggleButton
-                                            Margin="5"
-                                            hc:VisualElement.HighlightBrush="#4CAEE1"
-                                            IsChecked="{Binding Run2}"
-                                            Style="{StaticResource ToggleButtonSwitch.Small}" />
-                                        <TextBlock
+                                    <WrapPanel Grid.Row="1" Orientation="Vertical">
+                                        <StackPanel
+                                            Width="auto"
+                                            Margin="0,0,0,5"
                                             VerticalAlignment="Center"
-                                            FontSize="12"
-                                            Text="开启日志记录" />
-                                    </StackPanel>
+                                            Orientation="Horizontal">
+                                            <ToggleButton
+                                                Margin="5"
+                                                hc:VisualElement.HighlightBrush="#4CAEE1"
+                                                IsChecked="{Binding Run0}"
+                                                Style="{StaticResource ToggleButtonSwitch.Small}" />
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                FontSize="12"
+                                                Text="开机启动" />
 
-                                    <StackPanel
-                                        Width="auto"
-                                        Margin="0,0,0,5"
-                                        VerticalAlignment="Center"
-                                        Orientation="Horizontal">
-                                        <ToggleButton
-                                            Margin="5"
-                                            hc:VisualElement.HighlightBrush="#4CAEE1"
-                                            IsChecked="{Binding Run3}"
-                                            Style="{StaticResource ToggleButtonSwitch.Small}" />
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            FontSize="12"
-                                            Text="日志自动清理(保留30天内)" />
-                                    </StackPanel>
 
-                                    <StackPanel
-                                        Width="auto"
-                                        Margin="0,0,0,0"
-                                        VerticalAlignment="Center"
-                                        Orientation="Horizontal">
-                                        <ToggleButton
-                                            Margin="5"
-                                            hc:VisualElement.HighlightBrush="#4CAEE1"
-                                            IsChecked="{Binding Run1}"
-                                            Style="{StaticResource ToggleButtonSwitch.Small}" />
-                                        <TextBlock
+                                        </StackPanel>
+
+                                        <StackPanel
+                                            Width="auto"
+                                            Margin="0,0,0,5"
                                             VerticalAlignment="Center"
-                                            FontSize="12"
-                                            Text="Ngrok服务跟随启动" />
-                                    </StackPanel>
-                                </WrapPanel>
+                                            Orientation="Horizontal">
+                                            <ToggleButton
+                                                Margin="5"
+                                                hc:VisualElement.HighlightBrush="#4CAEE1"
+                                                IsChecked="{Binding Run2}"
+                                                Style="{StaticResource ToggleButtonSwitch.Small}" />
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                FontSize="12"
+                                                Text="开启日志记录" />
+                                        </StackPanel>
+
+                                        <StackPanel
+                                            Width="auto"
+                                            Margin="0,0,0,5"
+                                            VerticalAlignment="Center"
+                                            Orientation="Horizontal">
+                                            <ToggleButton
+                                                Margin="5"
+                                                hc:VisualElement.HighlightBrush="#4CAEE1"
+                                                IsChecked="{Binding Run3}"
+                                                Style="{StaticResource ToggleButtonSwitch.Small}" />
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                FontSize="12"
+                                                Text="日志自动清理(保留30天内)" />
+                                        </StackPanel>
+
+                                        <StackPanel
+                                            Width="auto"
+                                            Margin="0,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Orientation="Horizontal">
+                                            <ToggleButton
+                                                Margin="5"
+                                                hc:VisualElement.HighlightBrush="#4CAEE1"
+                                                IsChecked="{Binding Run1}"
+                                                Style="{StaticResource ToggleButtonSwitch.Small}" />
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                FontSize="12"
+                                                Text="Ngrok服务跟随启动" />
+                                        </StackPanel>
+                                    </WrapPanel>
+
+
+                                </Grid>
                             </Border>
 
                             <!--<Border Grid.Row="1" Style="{StaticResource CardStyle}">

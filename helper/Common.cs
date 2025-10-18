@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 using System.Windows.Interop;
 using Application = System.Windows.Application;
@@ -29,6 +30,9 @@ namespace Observer
         public static bool AllowCheck = true;
 
         public static myIcon ic = new myIcon();
+
+
+        public static SystemMonitor monitor = new SystemMonitor();
 
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
@@ -95,10 +99,13 @@ namespace Observer
 
         public static string ApiStatus => getApi(); // 自动调用方法
 
+
+        #region  接口相关
+
         //获取接口说明
         public static string getApi()
         {
-            return $"/help: 帮助\n/all: 全部信息\n/dl: 电量\n/wz: 位置\n/wl: 网络\n/zt: 服务状态\n/getcamera: 拍照\n/getphotonow: 拍照并返回结果\n/getphoto: 获取拍照结果(?file=文件名)\n/getlatestphoto: 获取最后一次拍照结果\n";
+            return $"/help: 帮助\n/all: 全部信息\n/dl: 电量\n/wz: 位置\n/wl: 网络\n/zt: 服务状态\n/getcamera: 拍照\n/getphotonow: 拍照并返回结果\n/getphoto: 获取拍照结果(?file=文件名)\n/getlatestphoto: 获取最后一次拍照结果\n/getphotolist: 获取拍照文件列表\n/cmd: 远程命令";
         }
 
         //获取接口说明（html）
@@ -161,6 +168,231 @@ namespace Observer
             }
         }
 
+        public static string GetPhotoListHtml(HttpListenerRequest request)
+        {
+            string catchDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "catch");
+            if (!Directory.Exists(catchDir))
+            {
+                return "<html><body><h3>没有找到照片目录</h3></body></html>";
+            }
+
+            var files = Directory.GetFiles(catchDir, "*.jpg")
+                                 .OrderByDescending(f => f)
+                                 .Select(Path.GetFileName)
+                                 .ToList();
+
+            string host = request.Url.Host;
+            int port = request.Url.Port;
+
+            // 构建HTML
+            var sb = new StringBuilder();
+            sb.AppendLine("<html><head><meta charset='utf-8'><title>照片列表</title>");
+            sb.AppendLine("<style>");
+            sb.AppendLine("body{font-family:Arial,sans-serif;background:#f9f9f9;padding:20px;}");
+            sb.AppendLine("h2{color:#333;}");
+            sb.AppendLine("ul{list-style:none;padding:0;}");
+            sb.AppendLine("li{margin:8px 0;}");
+            sb.AppendLine("a{text-decoration:none;color:#007bff;}");
+            sb.AppendLine("a:hover{text-decoration:underline;}");
+            sb.AppendLine("</style></head><body>");
+            sb.AppendLine("<h2>已保存的照片</h2>");
+            sb.AppendLine("<ul>");
+
+            if (files.Count == 0)
+            {
+                sb.AppendLine("<li>暂无照片</li>");
+            }
+            else
+            {
+                foreach (var file in files)
+                {
+                    sb.AppendLine($"<li><a href='http://{host}/getphoto?file={Uri.EscapeDataString(file)}' target='_blank'>{file}</a></li>");
+                }
+            }
+
+            sb.AppendLine("</ul></body></html>");
+            return sb.ToString();
+        }
+
+
+        public static string GetCmdPageHtml()
+        {
+            return @"
+<html>
+<head>
+<meta charset='utf-8'>
+<title>远程 CMD 控制台</title>
+<style>
+body { font-family: Consolas, monospace; background:#f7f7f7; padding:30px; }
+h2 { color:#333; }
+textarea { width:100%; height:150px; font-family:Consolas; padding:10px; border:1px solid #ccc; border-radius:6px; }
+button { margin-top:10px; padding:8px 16px; border:none; background:#0078d7; color:white; border-radius:5px; cursor:pointer; }
+button:hover { background:#005ea0; }
+pre { background:#222; color:#0f0; padding:15px; border-radius:6px; white-space:pre-wrap; word-break:break-all; }
+</style>
+</head>
+<body>
+    <h2>远程 CMD 执行</h2>
+    <form method='POST'>
+        <textarea name='cmd' placeholder='输入要执行的命令，例如：ipconfig 或 dir'></textarea><br>
+        <button type='submit'>执行命令</button>
+    </form>
+</body>
+</html>";
+        }
+
+        public static string RunCommandHtml(string command)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(command))
+                    return WrapSimpleHtml("命令不能为空", "/cmd");
+
+                // 规范化命令（去前后空格，转小写用于比较）
+                string trimmed = command.Trim();
+
+                // 先处理内置的安全命令（不走外壳）
+                if (string.Equals(trimmed, "lock", StringComparison.OrdinalIgnoreCase))
+                {
+                    bool ok = LockWorkStation();
+                    return WrapSimpleHtml(ok ? "已锁屏" : "锁屏失败", "/cmd");
+                }
+
+                if (string.Equals(trimmed, "reboot", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(trimmed, "restart", StringComparison.OrdinalIgnoreCase))
+                {
+                    // 重启，/r 重启, /t 0 立即, /f 强制
+                    var psi = new ProcessStartInfo
+                    {
+                        FileName = "shutdown.exe",
+                        Arguments = "/r /t 0",
+                        CreateNoWindow = true,
+                        UseShellExecute = false
+                    };
+
+                    try
+                    {
+                        Process.Start(psi);
+                        return WrapSimpleHtml("已发送重启命令（shutdown /r /t 0），系统可能马上重启。", "/cmd");
+                    }
+                    catch (Exception ex)
+                    {
+                        return WrapSimpleHtml("重启失败: " + WebUtility.HtmlEncode(ex.Message), "/cmd");
+                    }
+                }
+
+                if (string.Equals(trimmed, "shutdown", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(trimmed, "poweroff", StringComparison.OrdinalIgnoreCase))
+                {
+                    var psi = new ProcessStartInfo
+                    {
+                        FileName = "shutdown.exe",
+                        Arguments = "/s /t 0",
+                        CreateNoWindow = true,
+                        UseShellExecute = false
+                    };
+
+                    try
+                    {
+                        Process.Start(psi);
+                        return WrapSimpleHtml("已发送关机命令（shutdown /s /t 0），系统可能马上关机。", "/cmd");
+                    }
+                    catch (Exception ex)
+                    {
+                        return WrapSimpleHtml("关机失败: " + WebUtility.HtmlEncode(ex.Message), "/cmd");
+                    }
+                }
+
+                // 若不是内置命令，则执行外壳命令（保持此前的 OEM 编码读取，避免中文乱码）
+                // 特殊处理：如果命令以 rundll32.exe 开头并且需要整体引号（防止解析问题），整体包引号
+                if (trimmed.StartsWith("rundll32.exe", StringComparison.OrdinalIgnoreCase) &&
+                    !trimmed.StartsWith("\"", StringComparison.OrdinalIgnoreCase))
+                {
+                    command = $"\"{trimmed}\"";
+                }
+                else
+                {
+                    command = trimmed;
+                }
+
+                // 获取当前控制台 OEM code page（例如 936）
+                int oemCp = GetOEMCodePage();
+                Encoding oemEncoding;
+                try
+                {
+                    oemEncoding = Encoding.GetEncoding(oemCp);
+                }
+                catch
+                {
+                    oemEncoding = Encoding.Default;
+                }
+
+                var proc = new Process();
+                proc.StartInfo.FileName = "cmd.exe";
+                proc.StartInfo.Arguments = "/C " + command;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardError = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.CreateNoWindow = true;
+                proc.StartInfo.StandardOutputEncoding = oemEncoding;
+                proc.StartInfo.StandardErrorEncoding = oemEncoding;
+
+                proc.Start();
+
+                string output = proc.StandardOutput.ReadToEnd();
+                string error = proc.StandardError.ReadToEnd();
+                proc.WaitForExit();
+
+                string combined = string.IsNullOrEmpty(error) ? output : (output + Environment.NewLine + error);
+                combined = WebUtility.HtmlEncode(combined);
+
+                var html = $@"
+<!doctype html>
+<html><head><meta charset='utf-8'><title>CMD 执行结果</title>
+<style>body{{font-family:Consolas,monospace;background:#1e1e1e;color:#dcdcdc;padding:16px}}pre{{white-space:pre-wrap}}</style>
+</head>
+<body>
+<h2>命令：{WebUtility.HtmlEncode(command)}</h2>
+<pre>{combined}</pre>
+<p><a href='/cmd'>返回</a></p>
+</body></html>";
+
+                return html;
+            }
+            catch (Exception ex)
+            {
+                return WrapSimpleHtml("执行错误: " + WebUtility.HtmlEncode(ex.Message), "/cmd");
+            }
+        }
+
+        private static string WrapSimpleHtml(string text, string backHref = "/")
+        {
+            return $@"<html><head><meta charset='utf-8'><title>提示</title></head>
+<body><h3>{WebUtility.HtmlEncode(text)}</h3><a href='{backHref}'>返回</a></body></html>";
+        }
+
+        // P/Invoke 获取 OEM code page
+        [DllImport("kernel32.dll")]
+        private static extern uint GetOEMCP();
+
+        private static int GetOEMCodePage()
+        {
+            try
+            {
+                uint cp = GetOEMCP();
+                return (int)cp;
+            }
+            catch
+            {
+                return Encoding.Default.CodePage;
+            }
+        }
+
+        // LockWorkStation P/Invoke
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool LockWorkStation();
+
+        #endregion
 
         //获取电量情况
         public static string PrintBatteryStatus(String tl = "")
@@ -294,7 +526,7 @@ namespace Observer
         public static string AllStatus()
         {
             var status = System.Windows.Forms.SystemInformation.PowerStatus;
-            string re = $"运行时间：{GetRunTime()}\n电量：{status.BatteryLifePercent * 100}\n充电状态：{(status.PowerLineStatus == System.Windows.Forms.PowerLineStatus.Online ? "充电中" : "放电中")}\n预计可用时间(min)：{(status.BatteryLifeRemaining > 0 ? status.BatteryLifeRemaining / 60 : -1)}\n网络状态：{(Common.IsInternetAvailable() ? "在线" : "离线")}\n键鼠状态：{(Common.HasUserActivityWithin(5) ? "触发" : "静置")}\n锁屏状态：{(Common.lockStatus ? "锁定" : "解锁")}\n网络定位：{GetLocationStatus()}";
+            string re = $"运行时间：{GetRunTime()}\n电量：{status.BatteryLifePercent * 100}\n充电状态：{(status.PowerLineStatus == System.Windows.Forms.PowerLineStatus.Online ? "充电中" : "放电中")}\n预计可用时间(min)：{(status.BatteryLifeRemaining > 0 ? status.BatteryLifeRemaining / 60 : -1)}\n网络状态：{(Common.IsInternetAvailable() ? "在线" : "离线")}\n键鼠状态：{(Common.HasUserActivityWithin(5) ? "触发" : "静置")}\n锁屏状态：{(Common.lockStatus ? "锁定" : "解锁")}\n网络定位：{GetLocationStatus()}\n硬件状态：{GetMonitor()}";
             return re;
         }
 
@@ -505,11 +737,37 @@ namespace Observer
                     return model.Link;
                 case "锁屏状态":
                     return Common.lockStatus ? "锁定" : "解锁";
+                case "硬件状态":
+                    return Common.GetMonitor();
                 default:
                     return $"[{key}?]";
             }
         }
 
+
+        public static void OpenFolder(string folderPath)
+        {
+            try
+            {
+                if (Directory.Exists(folderPath))
+                {
+                    Process.Start("explorer.exe", folderPath);
+                }
+                else
+                {
+                    Logger.WriteLine("文件夹不存在！");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLine($"打开文件夹失败: {ex.Message}");
+            }
+        }
+
+        public static string GetMonitor()
+        {
+            return $"CPU 使用率: {monitor.GetCpuUsage():F1}%; CPU 温度: {monitor.GetCpuTemperature():F1}°C; GPU 温度: {monitor.GetGpuTemperature():F1}°C; 内存使用率: {monitor.GetMemoryUsage():F1}%";
+        }
 
     }
 }
